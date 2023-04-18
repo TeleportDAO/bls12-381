@@ -48,7 +48,20 @@ const beea = (
     
 }
 
-class Fp1{
+interface Fp{
+  	displayInfo();
+    inv(): any;
+    add(y: any): any;
+    sub(y: any): any;
+    mul(y: any): any;
+    equalOne(): Boolean;
+    mulNonres(): any;
+    eq(y: any): Boolean;
+    fromBigInt(x: BigNumber): any;
+    zero(): any;
+}
+
+class Fp1 implements Fp {
     public a0: BigNumber;
 	constructor(a0: BigNumber){
       	this.a0 = a0;
@@ -56,7 +69,7 @@ class Fp1{
   	displayInfo(){
         console.log("a0: ", this.a0)
     }
-    inv(){
+    inv(): Fp1{
         return new Fp1(
             beea(
                 this.a0,
@@ -67,36 +80,36 @@ class Fp1{
             )
         )
     }
-    add(y: Fp1) {
+    add(y: Fp1): Fp1 {
         return new Fp1(
             this.a0.add(y.a0).mod(order)
         )
     }
-    sub(y: Fp1) {
+    sub(y: Fp1): Fp1 {
         return new Fp1(
             this.a0.sub(y.a0).mod(order)
         )
     }
-    mul(y: Fp1){
+    mul(y: Fp1): Fp1 {
         return new Fp1(
             this.a0.mul(y.a0).mod(order)
         )
     }
-    equalOne(){
+    equalOne(): Boolean{
         return this.eq(oneFp1)
     }
-    mulNonres(){
+    mulNonres(): Fp1 {
         return new Fp1(
             this.a0
         )
     }
-    eq(y: Fp1){
+    eq(y: Fp1): Boolean{
         return this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber) {
+    fromBigInt(x: BigNumber): Fp1 {
         return new Fp1(x)
     }
-    zero() {
+    zero(): Fp1 {
         return zeroFp1
     }
 }
@@ -104,7 +117,7 @@ class Fp1{
 let zeroFp1 = new Fp1 (BigNumber.from(0))
 let oneFp1 = new Fp1 (BigNumber.from(1))
 
-class Fp2{
+class Fp2 implements Fp {
     public a1: Fp1;
     public a0: Fp1;
 	constructor(a1: Fp1, a0: Fp1){
@@ -115,7 +128,7 @@ class Fp2{
         console.log("a1: ", this.a1)
         console.log("a0: ", this.a0)
     }
-    inv(){
+    inv(): Fp2 {
         let factor = (
             (
                 (this.a1.mul(this.a1))
@@ -129,19 +142,19 @@ class Fp2{
             this.a0.mul(factor)
         )
     }
-    add(y: Fp2) {
+    add(y: Fp2): Fp2 {
         return new Fp2(
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y: Fp2) {
+    sub(y: Fp2): Fp2 {
         return new Fp2(
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y: Fp2){
+    mul(y: Fp2): Fp2 {
         return new Fp2(
             (
                 this.a1.mul(y.a0)
@@ -155,46 +168,46 @@ class Fp2{
             ),
         )
     }
-    equalOne(){
+    equalOne(): Boolean {
         return this.a1.eq(zeroFp1) && this.a0.eq(oneFp1)
     }
-    mulNonres(){
+    mulNonres(): Fp2 {
         return new Fp2(
             this.a1.add(this.a0),
             this.a0.sub(this.a1)
         )
     }
-    eq(y: Fp2){
+    eq(y: Fp2): Boolean{
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber) {
+    fromBigInt(x: BigNumber): Fp2 {
         return new Fp2(zeroFp1, fp1FromBigInt(x))
     }
-    zero() {
+    zero(): Fp2 {
         return zeroFp2
     }
 }
 
-function fp1FromBigInt(x: BigNumber) {
+function fp1FromBigInt(x: BigNumber): Fp1 {
     return new Fp1(x)
 }
 
-function fp2FromBigInt(x: BigNumber) {
+function fp2FromBigInt(x: BigNumber): Fp2 {
     return new Fp2(zeroFp1,fp1FromBigInt(x))
 }
 
-function fp6FromBigInt(x: BigNumber) {
+function fp6FromBigInt(x: BigNumber): Fp6 {
     return new Fp6(zeroFp2, zeroFp2, fp2FromBigInt(x))
 }
 
-function fp12FromBigInt(x: BigNumber) {
+function fp12FromBigInt(x: BigNumber): Fp12 {
     return new Fp12(zeroFp6, fp6FromBigInt(x))
 }
 
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (zeroFp1, oneFp1)
 
-class Fp6{
+class Fp6 implements Fp {
     public a2: Fp2;
     public a1: Fp2;
     public a0: Fp2;
@@ -208,7 +221,7 @@ class Fp6{
         console.log("a1: ", this.a1)
         console.log("a0: ", this.a0)
     }
-    inv(){
+    inv(): Fp6 {
         let t0 = (this.a0.mul(this.a0)).sub(this.a1.mul(this.a2).mulNonres())
         let t1 = (this.a2.mul(this.a2)).mulNonres().sub(this.a0.mul(this.a1))
         let t2 = (this.a1.mul(this.a1)).sub(this.a0.mul(this.a2))
@@ -228,21 +241,21 @@ class Fp6{
             t0.mul(factor)
         )
     }
-    add(y: Fp6) {
+    add(y: Fp6): Fp6 {
         return new Fp6(
             this.a2.add(y.a2),
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y: Fp6) {
+    sub(y: Fp6): Fp6 {
         return new Fp6(
             this.a2.sub(y.a2),
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y: Fp6){
+    mul(y: Fp6): Fp6 {
         let t0 = this.a0.mul(y.a0)
         let t1 = (this.a0.mul(y.a1)).add(this.a1.mul(y.a0))
         let t2 = (this.a0.mul(y.a2)).add(this.a1.mul(y.a1)).add(this.a2.mul(y.a0))
@@ -254,23 +267,23 @@ class Fp6{
             t0.add(t3)
         )
     }
-    equalOne(){
+    equalOne(): Boolean {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
-    mulNonres(){
+    mulNonres(): Fp6 {
         return new Fp6(
             this.a1,
             this.a0, 
             this.a2.mulNonres()
         )
     }
-    eq(y: Fp6){
+    eq(y: Fp6): Boolean {
         return this.a2.eq(y.a2) && this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber) {
+    fromBigInt(x: BigNumber): Fp6 {
         return new Fp6(zeroFp2, zeroFp2, fp2FromBigInt(x))
     }
-    zero() {
+    zero(): Fp6 {
         return zeroFp6
     }
 }
@@ -278,7 +291,7 @@ class Fp6{
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let oneFp6 = new Fp6 (zeroFp2, zeroFp2, oneFp2)
 
-class Fp12{
+class Fp12 implements Fp {
     public a1: Fp6;
     public a0: Fp6;
 	constructor(a1: Fp6, a0: Fp6){
@@ -291,7 +304,7 @@ class Fp12{
         console.log("a0: ", this.a0)
         console.log("end of fp12")
     }
-    inv(){
+    inv(): Fp12 {
         let factor = 
             ((
                 this.a0.mul(this.a0)
@@ -304,40 +317,43 @@ class Fp12{
             this.a0.mul(factor)
         )
     }
-    add(y: Fp12) {
+    add(y: Fp12): Fp12 {
         return new Fp12(
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y: Fp12) {
+    sub(y: Fp12): Fp12 {
         return new Fp12(
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y: Fp12){
+    mul(y: Fp12): Fp12 {
         return new Fp12(
             (this.a1.mul(y.a0)).add(this.a0.mul(y.a1)),
             (this.a0.mul(y.a0)).add((this.a1.mul(y.a1).mulNonres()))
         )
     }
-    equalOne(){
+    equalOne(): Boolean {
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
     }
-    eq(y: Fp12){
+    mulNonres(): Fp12{
+        throw "error: not mul non res"
+    }
+    eq(y: Fp12): Boolean {
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x) {
+    fromBigInt(x): Fp12 {
         return new Fp12(zeroFp6, fp6FromBigInt(x))
     }
-    zero() {
+    zero(): Fp12 {
         return zeroFp12
     }
 }
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (zeroFp6, oneFp6)
 
-export { Fp1, Fp2, Fp6, Fp12 }
+export { Fp, Fp1, Fp2, Fp6, Fp12 }
 export { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
 export { order, groupOrder }

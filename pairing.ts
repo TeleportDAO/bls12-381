@@ -1,4 +1,4 @@
-import { untwist, pointDouble, pointAdd } from "./points"
+import { untwist, pointDouble, pointAdd, point } from "./points"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp1, Fp2, Fp6, Fp12 } from "./fields"
@@ -7,7 +7,7 @@ let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 
-function doubleEval(fp2Point, fpPoint) {
+function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
     let slope = (
         wideR.x.mul(wideR.x).mul(fp12FromBigInt(BigNumber.from(3)))
@@ -18,14 +18,17 @@ function doubleEval(fp2Point, fpPoint) {
         slope.mul(wideR.x)
     )
 
-    return fp12FromBigInt(fpPoint.y).sub(
-        fp12FromBigInt(fpPoint.x).mul(slope)
+    let fpPointY = fpPoint.y as Fp1
+    let fpPointX = fpPoint.x as Fp1
+
+    return fp12FromBigInt(fpPointY.a0).sub(
+        fp12FromBigInt(fpPointX.a0).mul(slope)
     ).sub(
         v
     )
 }
 
-function addEvalHelper(fp12PointR, fp12PointQ, fpPoint) {
+function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     let slope = (fp12PointQ.y.sub(fp12PointR.y)).mul(
         (
             fp12PointQ.x.sub(fp12PointR.x)
@@ -43,24 +46,32 @@ function addEvalHelper(fp12PointR, fp12PointQ, fpPoint) {
         ).inv()
     )
 
-    return fp12FromBigInt(fpPoint.y).sub(
-        fp12FromBigInt(fpPoint.x).mul(slope)
+    let fpPointY = fpPoint.y as Fp1
+    let fpPointX = fpPoint.x as Fp1
+
+    return fp12FromBigInt(fpPointY.a0).sub(
+        fp12FromBigInt(fpPointX.a0).mul(slope)
     ).sub(
         v
     )
 }
 
-function addEval(fp2PointR, fp2PointQ, fpPoint) {
+function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideR = untwist(fp2PointR)
     let wideQ = untwist(fp2PointQ)
-    if (wideR.x.eq(wideQ.x) && wideR.y.eq(zeroFp12.sub(wideQ.y))) {
-        return fp12FromBigInt(fpPoint.x).sub(wideR.x)
+
+    let wideQY = wideQ.y as Fp12
+    let wideRX = wideR.x as Fp12
+
+    if (wideR.x.eq(wideQ.x) && wideR.y.eq(zeroFp12.sub(wideQY))) {
+        let fpPointX = fpPoint.x as Fp1
+        return fp12FromBigInt(fpPointX.a0).sub(wideRX)
     } else {
         return addEvalHelper(wideR, wideQ, fpPoint)
     }
 }
 
-function millerHelper(fpPointP, fp2PointQ, fp2PointR, boolsArr, fp12Result) {
+function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12) {
     console.log("millerHelper...")
     if (boolsArr.length == 0) {
         fp12Result.displayInfo()
@@ -79,7 +90,7 @@ function millerHelper(fpPointP, fp2PointQ, fp2PointR, boolsArr, fp12Result) {
     }
 }
 
-function miller(fpPointP, fp2PointQ) {
+function miller(fpPointP: point, fp2PointQ: point) {
 
     let iterations : Boolean[] = [];
 

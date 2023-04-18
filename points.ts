@@ -1,16 +1,16 @@
 
-import { Fp1, Fp2, Fp6, Fp12 } from "./fields"
+import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { order } from "./fields"
 
 class point {
-    public x: Fp1 | Fp2 | Fp6 | Fp12;
-    public y: Fp1 | Fp2 | Fp6 | Fp12;
+    public x: Fp;
+    public y: Fp;
     public isInf: Boolean;
     constructor(
-        x: Fp1 | Fp2 | Fp6 | Fp12, 
-        y: Fp1 | Fp2 | Fp6 | Fp12, 
+        x: Fp, 
+        y: Fp, 
         isInf: boolean
     ){
         if (typeof x != typeof y ) {
@@ -27,11 +27,11 @@ class point {
         console.log("y:")
         this.y.displayInfo()
     }
-    isInSubGroup() {
+    isInSubGroup(): Boolean {
         let mustInf = pointMul(order, this)
         return mustInf.isInf;
     }
-    eq(q: point) {
+    eq(q: point): Boolean {
         if (this.isInf) {
             return this.isInf == q.isInf
         } else {
@@ -39,7 +39,7 @@ class point {
         }
     }
 
-    isOnCurve() {
+    isOnCurve(): Boolean {
         if (this.x instanceof Fp1) {
             return this.isOnCurveG1()
         } else if (this.x instanceof Fp2) {
@@ -48,7 +48,7 @@ class point {
             throw "error"
         }
     }
-    isOnCurveG1() {
+    isOnCurveG1(): Boolean {
         return this.y.mul(this.y).eq(
             this.x.mul(
                 this.x.mul(this.x)
@@ -58,7 +58,7 @@ class point {
         )
     }
 
-    isOnCurveG2() {
+    isOnCurveG2(): Boolean {
         // FIXME: fix this part 
         // TODO check point at infinity
         return this.y.mul(this.y).eq(
@@ -71,7 +71,7 @@ class point {
     }
 }
 
-function pointDouble(p) {
+function pointDouble(p: point): point {
     if (p.isInf) {
         return p
     }
@@ -81,10 +81,10 @@ function pointDouble(p) {
     x3 = (slope.mul(slope)).sub((p.x.mul(p.x.fromBigInt(BigNumber.from(2)))))
     y3 = ((p.x.sub(x3)).mul(slope)).sub(p.y)
 
-    return new point (x3, y3, 0)
+    return new point (x3, y3, false)
 }
 
-function pointAdd(p, q) {
+function pointAdd(p: point, q: point): point {
     if (p.isInf) {
         return q
     }
@@ -95,21 +95,21 @@ function pointAdd(p, q) {
     if (p.x.eq(q.x) && p.y.eq(q.y)) {
         return pointDouble(p);
     } else if (p.x.eq(q.x) && !p.y.eq(q.y)) {
-        return new point(BigNumber.from(0),BigNumber.from(0), 0); 
-    } else {
-        let slope, x3, y3
+        return new point(p.x.zero(),p.y.zero(), true); 
+    } 
 
-        let b1 = q.x.sub(p.x)
-        slope = b1.inv()
-        let theSub = q.y.sub(p.y)
+    let slope, x3, y3
 
-        slope = theSub.mul(slope)
+    let b1 = q.x.sub(p.x)
+    slope = b1.inv()
+    let theSub = q.y.sub(p.y)
 
-        x3 = (slope.mul(slope)).sub((p.x.add(q.x)))
-        y3 = ((p.x.sub(x3)).mul(slope)).sub(p.y)
-        
-        return new point(x3, y3, 0);
-    }
+    slope = theSub.mul(slope)
+
+    x3 = (slope.mul(slope)).sub((p.x.add(q.x)))
+    y3 = ((p.x.sub(x3)).mul(slope)).sub(p.y)
+    
+    return new point(x3, y3, false);
 }
 
 let zeroFp1 = new Fp1 (BigNumber.from(0))
@@ -118,22 +118,26 @@ let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (zeroFp1, oneFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
-function untwist(fp2Point) {
+function untwist(fp2Point: point): point {
     let root = new Fp6(zeroFp2, oneFp2, zeroFp2)
-    let wideXA0 = new Fp6(zeroFp2, zeroFp2, fp2Point.x)
+    let fp2PointX = fp2Point.x as Fp2
+    let wideXA0 = new Fp6(zeroFp2, zeroFp2, fp2PointX)
     let wideX = new Fp12(zeroFp6, wideXA0)
     let forInvX = new Fp12(zeroFp6, root)
     wideX = wideX.mul(forInvX.inv())
 
-    let wideYA0 = new Fp6(zeroFp2, zeroFp2, fp2Point.y)
+
+    let fp2PointY = fp2Point.y as Fp2
+    let wideYA0 = new Fp6(zeroFp2, zeroFp2, fp2PointY)
     let wideY = new Fp12(zeroFp6, wideYA0)
     let forInvY = new Fp12(root, zeroFp6)
     wideY = wideY.mul(forInvY.inv())
 
-    return new point(wideX, wideY, 0)
+    return new point(wideX, wideY, false)
 }
 
-function pointMul(scalar, base) {
+// function pointMul(scalar: BigNumber, base: point): point {
+function pointMul(scalar: BigNumber, base: point) {
     if (
         // base.isOnCurve() && 
         scalar.gt(BigNumber.from(0))) {
@@ -149,14 +153,14 @@ function pointMul(scalar, base) {
         // else
         //     return pointMulHelper(scalar, base, new point(base.x.zero(), base.x.zero()));
     } else if (base.isOnCurve() && scalar.eq(BigNumber.from(0))) {
-        return null;
+        // return null;
     } else if (base.isOnCurve() && scalar.lte(BigNumber.from(0))) {
         // TODO
         // return pointMulHelper(scalar.mul(BigNumber.from(-1)), pointNegate(base), PointAtInfinity);
     }
 }
   
-function pointMulHelper(scalar, base, accum) {
+function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
     if (scalar.eq(BigNumber.from(0))) {
         return accum;
     }
@@ -169,4 +173,4 @@ function pointMulHelper(scalar, base, accum) {
     }
 }
 
-export { untwist, pointDouble, pointAdd }
+export { untwist, pointDouble, pointAdd, point }
