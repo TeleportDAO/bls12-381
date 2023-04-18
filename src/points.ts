@@ -190,4 +190,4 @@ function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
     }
 }
 
-export { untwist, pointDouble, pointAdd, point }
+export { untwist, pointDouble, pointAdd, pointMul, point }

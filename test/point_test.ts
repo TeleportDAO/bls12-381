@@ -1,11 +1,13 @@
 // import { BN } from 'bn.js'; // or whichever library you are using for big integers
 import { expect } from "chai";
-import { point, pointAdd } from '../src/points';
+import { point, pointAdd, pointMul } from '../src/points';
 import { Fp, Fp1, Fp2 } from '../src/fields';
 import { BigNumber } from '@ethersproject/bignumber';
 
-const g1TestVector = require("./fixtures/g1_add.json")
-const g2TestVector = require("./fixtures/g2_add.json")
+const g1AddTestVector = require("./fixtures/g1_add.json")
+const g2AddTestVector = require("./fixtures/g2_add.json")
+
+const g1MulTestVector = require("./fixtures/g1_mul.json")
 
 function createG1Point(xStr: string, yStr: string): point {
     return new point(
@@ -35,20 +37,20 @@ function createG2Point(
 }
 
 function g1AddTest() {
-    for (let i = 0; i < g1TestVector.g1_add.length; i++) {
+    for (let i = 0; i < g1AddTestVector.g1_add.length; i++) {
         let p1 = createG1Point(
-            g1TestVector.g1_add[i].p1X,
-            g1TestVector.g1_add[i].p1Y
+            g1AddTestVector.g1_add[i].p1X,
+            g1AddTestVector.g1_add[i].p1Y
         )
 
         let p2 = createG1Point(
-            g1TestVector.g1_add[i].p2X,
-            g1TestVector.g1_add[i].p2Y
+            g1AddTestVector.g1_add[i].p2X,
+            g1AddTestVector.g1_add[i].p2Y
         )
 
         let res = createG1Point(
-            g1TestVector.g1_add[i].RSX,
-            g1TestVector.g1_add[i].RSY
+            g1AddTestVector.g1_add[i].RSX,
+            g1AddTestVector.g1_add[i].RSY
         )
 
         let p1PlusP2 = pointAdd(p1, p2)
@@ -59,27 +61,49 @@ function g1AddTest() {
     }
 }
 
+function g1MulTest() {
+    for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+        let p1 = createG1Point(
+            g1MulTestVector.g1_mul[i].p1X,
+            g1MulTestVector.g1_mul[i].p1Y
+        )
+
+        let scalar = BigNumber.from(g1MulTestVector.g1_mul[i].scl)
+
+        let res = createG1Point(
+            g1MulTestVector.g1_mul[i].RSX,
+            g1MulTestVector.g1_mul[i].RSY
+        )
+
+        let sclMulP1 = pointMul(scalar, p1)
+
+        expect(
+            res.eq(sclMulP1)
+        ).to.equal(true)
+    }
+}
+
 function g2AddTest() {
-    for (let i = 0; i < g2TestVector.g2_add.length; i++) {
+    for (let i = 0; i < g2AddTestVector.g2_add.length; i++) {
         let p1 = createG2Point(
-            g2TestVector.g2_add[i].p1X_a1,
-            g2TestVector.g2_add[i].p1X_a0,
-            g2TestVector.g2_add[i].p1Y_a1,
-            g2TestVector.g2_add[i].p1Y_a0
+            g2AddTestVector.g2_add[i].p1X_a1,
+            g2AddTestVector.g2_add[i].p1X_a0,
+            g2AddTestVector.g2_add[i].p1Y_a1,
+            g2AddTestVector.g2_add[i].p1Y_a0
         )
 
         let p2 = createG2Point(
-            g2TestVector.g2_add[i].p2X_a1,
-            g2TestVector.g2_add[i].p2X_a0,
-            g2TestVector.g2_add[i].p2Y_a1,
-            g2TestVector.g2_add[i].p2Y_a0
+            g2AddTestVector.g2_add[i].p2X_a1,
+            g2AddTestVector.g2_add[i].p2X_a0,
+            g2AddTestVector.g2_add[i].p2Y_a1,
+            g2AddTestVector.g2_add[i].p2Y_a0
         )
 
         let res = createG2Point(
-            g2TestVector.g2_add[i].RSX_a1,
-            g2TestVector.g2_add[i].RSX_a0,
-            g2TestVector.g2_add[i].RSY_a1,
-            g2TestVector.g2_add[i].RSY_a0
+            g2AddTestVector.g2_add[i].RSX_a1,
+            g2AddTestVector.g2_add[i].RSX_a0,
+            g2AddTestVector.g2_add[i].RSY_a1,
+            g2AddTestVector.g2_add[i].RSY_a0
         )
 
         let p1PlusP2 = pointAdd(p1, p2)
@@ -92,3 +116,5 @@ function g2AddTest() {
 
 g1AddTest()
 g2AddTest()
+
+g1MulTest()
