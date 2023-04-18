@@ -18,5 +18,11 @@
   "homepage": "https://github.com/TeleportDAO/bls12-381#readme",
   "dependencies": {
     "@ethersproject/bignumber": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.15.11",
+    "chai": "^4.3.7"
   }
 }
