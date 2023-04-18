@@ -1,31 +1,29 @@
 import { BigNumber } from "@ethersproject/bignumber";
 
-const {
-    BigNumber,
-    FixedFormat,
-    FixedNumber,
-    formatFixed,
-    parseFixed
-} = require("@ethersproject/bignumber");
+let order: BigNumber = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
+let groupOrder: BigNumber = BigNumber.from("0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001")
 
-let order = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
-let groupOrder = BigNumber.from("0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001")
-
-const beea = (u, v, x1, x2, p) => {
+const beea = (
+    u: BigNumber, 
+    v: BigNumber, 
+    x1: BigNumber, 
+    x2: BigNumber, 
+    p: BigNumber
+) => {
     let firstU = u;
     let theInv = BigNumber.from(0)
 
     while (!u.eq(BigNumber.from(1)) && !v.eq( BigNumber.from(1))) {
-        while (u.mod(2) == 0 && u.gt(0)) {
+        while (u.mod(2).eq(0) && u.gt(0)) {
             u = u.div(2)
-            if (x1.mod(2) == 0)
+            if (x1.mod(2).eq(0))
                 x1 = x1.div(2)
             else 
                 x1 = (x1.add(p)).div(2)
         }
-        while (v.mod(2) == 0) {
+        while (v.mod(2).eq(0)) {
             v = v.div(2)
-            if (x2.mod(2) == 0)
+            if (x2.mod(2).eq(0))
                 x2 = x2.div(2)
             else 
                 x2 = (x2.add(p)).div(2)
@@ -46,15 +44,13 @@ const beea = (u, v, x1, x2, p) => {
         theInv = x2.mod(p)
     }
 
-    let mustOne = (theInv.mul(firstU)).sub(((theInv.mul(firstU)).div(p)).mul(p))
-
     return theInv;
     
 }
 
 class Fp1{
     public a0: BigNumber;
-	constructor(a0){
+	constructor(a0: BigNumber){
       	this.a0 = a0;
     }
   	displayInfo(){
@@ -71,17 +67,17 @@ class Fp1{
             )
         )
     }
-    add(y) {
+    add(y: Fp1) {
         return new Fp1(
             this.a0.add(y.a0).mod(order)
         )
     }
-    sub(y) {
+    sub(y: Fp1) {
         return new Fp1(
             this.a0.sub(y.a0).mod(order)
         )
     }
-    mul(y){
+    mul(y: Fp1){
         return new Fp1(
             this.a0.mul(y.a0).mod(order)
         )
@@ -94,10 +90,10 @@ class Fp1{
             this.a0
         )
     }
-    eq(y){
+    eq(y: Fp1){
         return this.a0.eq(y.a0)
     } 
-    fromBigInt(x) {
+    fromBigInt(x: BigNumber) {
         return new Fp1(x)
     }
     zero() {
@@ -111,7 +107,7 @@ let oneFp1 = new Fp1 (BigNumber.from(1))
 class Fp2{
     public a1: Fp1;
     public a0: Fp1;
-	constructor(a1, a0){
+	constructor(a1: Fp1, a0: Fp1){
     	this.a1 = a1;
       	this.a0 = a0;
     }
@@ -133,19 +129,19 @@ class Fp2{
             this.a0.mul(factor)
         )
     }
-    add(y) {
+    add(y: Fp2) {
         return new Fp2(
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y) {
+    sub(y: Fp2) {
         return new Fp2(
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y){
+    mul(y: Fp2){
         return new Fp2(
             (
                 this.a1.mul(y.a0)
@@ -168,10 +164,10 @@ class Fp2{
             this.a0.sub(this.a1)
         )
     }
-    eq(y){
+    eq(y: Fp2){
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x) {
+    fromBigInt(x: BigNumber) {
         return new Fp2(zeroFp1, fp1FromBigInt(x))
     }
     zero() {
@@ -179,19 +175,19 @@ class Fp2{
     }
 }
 
-function fp1FromBigInt(x) {
+function fp1FromBigInt(x: BigNumber) {
     return new Fp1(x)
 }
 
-function fp2FromBigInt(x) {
+function fp2FromBigInt(x: BigNumber) {
     return new Fp2(zeroFp1,fp1FromBigInt(x))
 }
 
-function fp6FromBigInt(x) {
+function fp6FromBigInt(x: BigNumber) {
     return new Fp6(zeroFp2, zeroFp2, fp2FromBigInt(x))
 }
 
-function fp12FromBigInt(x) {
+function fp12FromBigInt(x: BigNumber) {
     return new Fp12(zeroFp6, fp6FromBigInt(x))
 }
 
@@ -202,7 +198,7 @@ class Fp6{
     public a2: Fp2;
     public a1: Fp2;
     public a0: Fp2;
-	constructor(a2, a1, a0){
+	constructor(a2: Fp2, a1: Fp2, a0: Fp2){
         this.a2 = a2;
     	this.a1 = a1;
       	this.a0 = a0;
@@ -232,21 +228,21 @@ class Fp6{
             t0.mul(factor)
         )
     }
-    add(y) {
+    add(y: Fp6) {
         return new Fp6(
             this.a2.add(y.a2),
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y) {
+    sub(y: Fp6) {
         return new Fp6(
             this.a2.sub(y.a2),
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y){
+    mul(y: Fp6){
         let t0 = this.a0.mul(y.a0)
         let t1 = (this.a0.mul(y.a1)).add(this.a1.mul(y.a0))
         let t2 = (this.a0.mul(y.a2)).add(this.a1.mul(y.a1)).add(this.a2.mul(y.a0))
@@ -268,10 +264,10 @@ class Fp6{
             this.a2.mulNonres()
         )
     }
-    eq(y){
+    eq(y: Fp6){
         return this.a2.eq(y.a2) && this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x) {
+    fromBigInt(x: BigNumber) {
         return new Fp6(zeroFp2, zeroFp2, fp2FromBigInt(x))
     }
     zero() {
@@ -285,7 +281,7 @@ let oneFp6 = new Fp6 (zeroFp2, zeroFp2, oneFp2)
 class Fp12{
     public a1: Fp6;
     public a0: Fp6;
-	constructor(a1, a0){
+	constructor(a1: Fp6, a0: Fp6){
     	this.a1 = a1;
       	this.a0 = a0;
     }
@@ -308,19 +304,19 @@ class Fp12{
             this.a0.mul(factor)
         )
     }
-    add(y) {
+    add(y: Fp12) {
         return new Fp12(
             this.a1.add(y.a1),
             this.a0.add(y.a0)
         )
     }
-    sub(y) {
+    sub(y: Fp12) {
         return new Fp12(
             this.a1.sub(y.a1),
             this.a0.sub(y.a0)
         )
     }
-    mul(y){
+    mul(y: Fp12){
         return new Fp12(
             (this.a1.mul(y.a0)).add(this.a0.mul(y.a1)),
             (this.a0.mul(y.a0)).add((this.a1.mul(y.a1).mulNonres()))
@@ -329,7 +325,7 @@ class Fp12{
     equalOne(){
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
     }
-    eq(y){
+    eq(y: Fp12){
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
     fromBigInt(x) {
@@ -344,4 +340,4 @@ let oneFp12 = new Fp12 (zeroFp6, oneFp6)
 
 export { Fp1, Fp2, Fp6, Fp12 }
 export { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
-export { order }
+export { order, groupOrder }

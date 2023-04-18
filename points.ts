@@ -8,10 +8,18 @@ class point {
     public x: Fp1 | Fp2 | Fp6 | Fp12;
     public y: Fp1 | Fp2 | Fp6 | Fp12;
     public isInf: Boolean;
-    constructor(x, y, isInf){
-    	this.x = x;
-      	this.y = y;
-        this.isInf = isInf;
+    constructor(
+        x: Fp1 | Fp2 | Fp6 | Fp12, 
+        y: Fp1 | Fp2 | Fp6 | Fp12, 
+        isInf: boolean
+    ){
+        if (typeof x != typeof y ) {
+            throw "error: x and y must have same types"
+        } else {
+            this.x = x;
+            this.y = y;
+            this.isInf = isInf;
+        }
     }
   	displayInfo(){
         console.log("x:")
@@ -23,7 +31,7 @@ class point {
         let mustInf = pointMul(order, this)
         return mustInf.isInf;
     }
-    eq(q) {
+    eq(q: point) {
         if (this.isInf) {
             return this.isInf == q.isInf
         } else {
