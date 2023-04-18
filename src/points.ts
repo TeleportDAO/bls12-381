@@ -1,5 +1,5 @@
 
-import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
+import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { order } from "./fields"
@@ -28,7 +28,7 @@ class point {
         this.y.displayInfo()
     }
     isInSubGroup(): Boolean {
-        let mustInf = pointMul(order, this)
+        let mustInf = pointMul(groupOrder, this)
         return mustInf.isInf;
     }
     eq(q: point): Boolean {
@@ -109,7 +109,7 @@ function pointAdd(p: point, q: point): point {
     if (p.x.eq(q.x) && p.y.eq(q.y)) {
         return pointDouble(p);
     } else if (p.x.eq(q.x) && !p.y.eq(q.y)) {
-        return new point(p.x.zero(),p.y.zero(), true); 
+        return p.pointAtInfinity(); 
     } 
 
     let slope, x3, y3

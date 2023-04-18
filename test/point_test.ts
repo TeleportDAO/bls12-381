@@ -1,7 +1,7 @@
 // import { BN } from 'bn.js'; // or whichever library you are using for big integers
 import { expect } from "chai";
 import { point, pointAdd, pointMul } from '../src/points';
-import { Fp, Fp1, Fp2 } from '../src/fields';
+import { Fp, Fp1, Fp2, order, groupOrder } from '../src/fields';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const g1AddTestVector = require("./fixtures/g1_add.json")
@@ -141,8 +141,29 @@ function g2MulTest() {
     }
 }
 
-g1AddTest()
-g2AddTest()
+function pointAtInfTest() {
+    for (let i = 0; i < g2MulTestVector.g2_mul.length; i++) {
+        let p1 = createG2Point(
+            g2MulTestVector.g2_mul[i].p1X_a1,
+            g2MulTestVector.g2_mul[i].p1X_a0,
+            g2MulTestVector.g2_mul[i].p1Y_a1,
+            g2MulTestVector.g2_mul[i].p1Y_a0
+        )
 
-g1MulTest()
-g2MulTest()
+        let orderMuP1 = pointMul(groupOrder.mul(BigNumber.from(10).pow(20)), p1)
+        // let orderMuP1 = pointMul(groupOrder.add(BigNumber.from(10).pow(10)), p1)
+        // let orderMuP1 = pointMul(order, p1)
+
+        console.log("orderMuP1")
+        orderMuP1.displayInfo()
+        console.log(orderMuP1)
+    }
+}
+
+// g1AddTest()
+// g2AddTest()
+
+// g1MulTest()
+// g2MulTest()
+
+pointAtInfTest()
