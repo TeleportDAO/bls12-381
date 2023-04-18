@@ -11,7 +11,7 @@ class point {
     constructor(
         x: Fp, 
         y: Fp, 
-        isInf: boolean
+        isInf: Boolean
     ){
         if (typeof x != typeof y ) {
             throw "error: x and y must have same types"
@@ -137,7 +137,7 @@ function untwist(fp2Point: point): point {
 }
 
 // function pointMul(scalar: BigNumber, base: point): point {
-function pointMul(scalar: BigNumber, base: point) {
+function pointMul(scalar: BigNumber, base: point): point {
     if (
         // base.isOnCurve() && 
         scalar.gt(BigNumber.from(0))) {
@@ -158,6 +158,9 @@ function pointMul(scalar: BigNumber, base: point) {
         // TODO
         // return pointMulHelper(scalar.mul(BigNumber.from(-1)), pointNegate(base), PointAtInfinity);
     }
+
+    // FIXME:
+    return new point(base.x.zero(), base.y.zero(), false)
 }
   
 function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
