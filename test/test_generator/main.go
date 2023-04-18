@@ -4,7 +4,10 @@ import "fmt"
 
 func main() {
 	//g1Add()
-	g2Add()
+	//g2Add()
+
+	//g1Mul()
+	// g2Mul()
 }
 
 func g1Add() {
@@ -15,6 +18,18 @@ func g1Add() {
 	fmt.Printf("\"p1Y\": \"0x%s\", \n", ps[128:256])
 	fmt.Printf("\"p2X\": \"0x%s\", \n", ps[256:384])
 	fmt.Printf("\"p2Y\": \"0x%s\", \n", ps[384:512])
+
+	fmt.Printf("\"RSX\": \"0x%s\", \n", rs[:128])
+	fmt.Printf("\"RSY\": \"0x%s\" \n", rs[128:256])
+}
+
+func g1Mul() {
+	ps := "0000000000000000000000000000000017a17b82e3bfadf3250210d8ef572c02c3610d65ab4d7366e0b748768a28ee6a1b51f77ed686a64f087f36f641e7dca900000000000000000000000000000000077ea73d233ccea51dc4d5acecf6d9332bf17ae51598f4b394a5f62fb387e9c9aa1d6823b64a074f5873422ca57545d38964d5867927bc3e35a0b4c457482373969bff5edff8a781d65573e07fd87b89"
+	rs := "000000000000000000000000000000000d7e5794c88c549970383454d98f9b7cebb7fdf8545256f1a5e42a61aa1d61193f02075dc6314b650da14f3776da6ead0000000000000000000000000000000002054faff236d38d2307aa6cbbc696d50f5b3ffead1be2df97a05ebbcbc9e02eaf153f311a1e141eb95d411c0ec6e981"
+
+	fmt.Printf("\"p1X\": \"0x%s\", \n", ps[:128])
+	fmt.Printf("\"p1Y\": \"0x%s\", \n", ps[128:256])
+	fmt.Printf("\"scl\": \"0x%s\", \n", ps[256:])
 
 	fmt.Printf("\"RSX\": \"0x%s\", \n", rs[:128])
 	fmt.Printf("\"RSY\": \"0x%s\" \n", rs[128:256])
@@ -32,6 +47,22 @@ func g2Add() {
 	fmt.Printf("\"p2X_a1\": \"0x%s\", \n", ps[640:768])
 	fmt.Printf("\"p2Y_a0\": \"0x%s\", \n", ps[768:896])
 	fmt.Printf("\"p2Y_a1\": \"0x%s\", \n", ps[896:1024])
+
+	fmt.Printf("\"RSX_a0\": \"0x%s\", \n", rs[:128])
+	fmt.Printf("\"RSX_a1\": \"0x%s\", \n", rs[128:256])
+	fmt.Printf("\"RSY_a0\": \"0x%s\", \n", rs[256:384])
+	fmt.Printf("\"RSY_a1\": \"0x%s\" \n", rs[384:512])
+}
+
+func g2Mul() {
+	ps := "000000000000000000000000000000000149704960cccf9d5ea414c73871e896b1d4cf0a946b0db72f5f2c5df98d2ec4f3adbbc14c78047961bc9620cb6cfb5900000000000000000000000000000000140c5d25e534fb1bfdc19ba4cecaabe619f6e0cd3d60b0f17dafd7bcd27b286d4f4477d00c5e1af22ee1a0c67fbf177c00000000000000000000000000000000029a1727041590b8459890de736df15c00d80ab007c3aee692ddcdf75790c9806d198e9f4502bec2f0a623491c3f877d0000000000000000000000000000000008a94c98baa9409151030d4fae2bd4a64c6f11ea3c99b9661fdaed226b9a7c2a7d609be34afda5d18b8911b6e015bf494c51f97bcdda93904ae26991b471e9ea942e2b5b8ed26055da11c58bc7b5002a"
+	rs := "0000000000000000000000000000000017ebc9446f8c8e17dfeddab9188d0c808565da29c0bdbbc4138a44ca3196c4564853be28286b66660cda36832d6940010000000000000000000000000000000007f29a9583b4ae83d3913dcd72590a3f20f39eb5a6d36663c1ef433058e76550085b9c01bf797d98d0eef45cc22ff8c50000000000000000000000000000000016eeaeb123b12d1913ff1e50f974228c79f2b995609d2e3835c8e1d68773b0cd484df57b86111cdb75de1e19eaf062e500000000000000000000000000000000002f5688c1286aed42309896bd65d1826dc64dda615238fa9043669806968b8e0e1e3e77ef192b7df540aaf0ed282a9a"
+
+	fmt.Printf("\"p1X_a0\": \"0x%s\", \n", ps[:128])
+	fmt.Printf("\"p1X_a1\": \"0x%s\", \n", ps[128:256])
+	fmt.Printf("\"p1Y_a0\": \"0x%s\", \n", ps[256:384])
+	fmt.Printf("\"p1Y_a1\": \"0x%s\", \n", ps[384:512])
+	fmt.Printf("\"scl\": \"0x%s\", \n", ps[512:])
 
 	fmt.Printf("\"RSX_a0\": \"0x%s\", \n", rs[:128])
 	fmt.Printf("\"RSX_a1\": \"0x%s\", \n", rs[128:256])

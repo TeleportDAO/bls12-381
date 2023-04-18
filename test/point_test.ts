@@ -8,6 +8,7 @@ const g1AddTestVector = require("./fixtures/g1_add.json")
 const g2AddTestVector = require("./fixtures/g2_add.json")
 
 const g1MulTestVector = require("./fixtures/g1_mul.json")
+const g2MulTestVector = require("./fixtures/g2_mul.json")
 
 function createG1Point(xStr: string, yStr: string): point {
     return new point(
@@ -114,7 +115,34 @@ function g2AddTest() {
     }
 }
 
+function g2MulTest() {
+    for (let i = 0; i < g2MulTestVector.g2_mul.length; i++) {
+        let p1 = createG2Point(
+            g2MulTestVector.g2_mul[i].p1X_a1,
+            g2MulTestVector.g2_mul[i].p1X_a0,
+            g2MulTestVector.g2_mul[i].p1Y_a1,
+            g2MulTestVector.g2_mul[i].p1Y_a0
+        )
+
+        let scalar = BigNumber.from(g2MulTestVector.g2_mul[i].scl)
+
+        let res = createG2Point(
+            g2MulTestVector.g2_mul[i].RSX_a1,
+            g2MulTestVector.g2_mul[i].RSX_a0,
+            g2MulTestVector.g2_mul[i].RSY_a1,
+            g2MulTestVector.g2_mul[i].RSY_a0
+        )
+
+        let sclMuP1 = pointMul(scalar, p1)
+
+        expect(
+            res.eq(sclMuP1)
+        ).to.equal(true)
+    }
+}
+
 g1AddTest()
 g2AddTest()
 
 g1MulTest()
+g2MulTest()
