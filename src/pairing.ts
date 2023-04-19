@@ -9,7 +9,13 @@ let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 
 function doubleEval(fp2Point: point, fpPoint: point) {
+    console.log("doubleEval...")
     let wideR = untwist(fp2Point)
+    console.log("==========")
+    wideR.x.displayInfo()
+    wideR.y.displayInfo()
+    console.log("==========")
+
     let slope = (
         wideR.x.mul(wideR.x).mul(fp12FromBigInt(BigNumber.from(3)))
     ).mul(
@@ -22,6 +28,8 @@ function doubleEval(fp2Point: point, fpPoint: point) {
     let fpPointY = fpPoint.y as Fp1
     let fpPointX = fpPoint.x as Fp1
 
+    console.log("...doubleEval")
+
     return fp12FromBigInt(fpPointY.a0).sub(
         fp12FromBigInt(fpPointX.a0).mul(slope)
     ).sub(
@@ -30,11 +38,35 @@ function doubleEval(fp2Point: point, fpPoint: point) {
 }
 
 function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
+    console.log("addEvalHelper...")
+
+    // fp12PointR.displayInfo()
+    // fp12PointQ.displayInfo()
+
+    console.log("addEvalHelper ------")
+
+    // console.log("QX")
+    // fp12PointQ.x.displayInfo()
+    // console.log("QY")
+    // fp12PointQ.y.displayInfo()
+    
+
+    // console.log("RX")
+    // fp12PointR.x.displayInfo()
+    // console.log("RY")
+    // fp12PointR.y.displayInfo()
+
+    console.log("addEvalHelper ------")
+    
+
     let slope = (fp12PointQ.y.sub(fp12PointR.y)).mul(
         (
             fp12PointQ.x.sub(fp12PointR.x)
         ).inv()
     )
+
+    console.log("addEvalHelper after slope")
+
     let v = (
         (
             fp12PointQ.y.mul(fp12PointR.x)
@@ -47,8 +79,12 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
         ).inv()
     )
 
+    console.log("addEvalHelper after v")
+
     let fpPointY = fpPoint.y as Fp1
     let fpPointX = fpPoint.x as Fp1
+
+    console.log("...addEvalHelper")
 
     return fp12FromBigInt(fpPointY.a0).sub(
         fp12FromBigInt(fpPointX.a0).mul(slope)
@@ -58,6 +94,7 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
 }
 
 function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
+    console.log("addEval...")
     let wideR = untwist(fp2PointR)
     let wideQ = untwist(fp2PointQ)
 
@@ -65,11 +102,15 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideRX = wideR.x as Fp12
 
     if (wideR.x.eq(wideQ.x) && wideR.y.eq(zeroFp12.sub(wideQY))) {
+        console.log("addEval if")
         let fpPointX = fpPoint.x as Fp1
         return fp12FromBigInt(fpPointX.a0).sub(wideRX)
     } else {
+        console.log("addEval else")
         return addEvalHelper(wideR, wideQ, fpPoint)
     }
+
+    console.log("...addEval")
 }
 
 function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12): Fp12 {
@@ -79,8 +120,15 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
         return fp12Result;
     }
 
+    console.log("millerHelper before accm")
+
     let accum = fp12Result.mul(fp12Result).mul(doubleEval(fp2PointR, fpPointP))
+
+    console.log("millerHelper after accm")
+
     let doubleR = pointDouble(fp2PointR)
+
+    console.log("millerHelper after double")
 
     if (boolsArr[0]) {
         boolsArr.shift()
@@ -179,4 +227,4 @@ function pairing(p: point, q: point): Fp12 {
     return zeroFp12
 }
   
-export { pairing, pointMul, miller }
+export { pairing, pointMul, miller, doubleEval, addEval }
