@@ -153,7 +153,7 @@ function untwist(fp2Point: point): point {
 // function pointMul(scalar: BigNumber, base: point): point {
 function pointMul(scalar: BigNumber, base: point): point {
     if (
-        // base.isOnCurve() && 
+        base.isOnCurve() && 
         scalar.gt(BigNumber.from(0))) {
         // TODO: adding a zero point (an instance of point at infinity which its components is zero but its 
         // isInf flag is not necessarily true) {PointAtInfinity}
@@ -190,4 +190,16 @@ function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
     }
 }
 
-export { untwist, pointDouble, pointAdd, pointMul, point }
+function powHelper(a0: Fp, exp: BigNumber, result: Fp): Fp {
+    if (exp.lte(BigNumber.from(1))) {
+      return a0;
+    }
+    const accum = powHelper(a0, exp.div(BigNumber.from(2)), result);
+    if (exp.mod(BigNumber.from(2)).eq(BigNumber.from(0))) {
+      return accum.mul(accum);
+    } else {
+      return accum.mul(accum).mul(a0);
+    }
+}
+
+export { untwist, pointDouble, pointAdd, pointMul, powHelper, point }

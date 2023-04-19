@@ -1,7 +1,7 @@
 // import { BN } from 'bn.js'; // or whichever library you are using for big integers
 import { expect } from "chai";
-import { point, pointAdd, pointMul } from '../src/points';
-import { Fp, Fp1, Fp2, order, groupOrder } from '../src/fields';
+import { point, pointAdd, pointMul, pointDouble, powHelper } from '../src/points';
+import { Fp, Fp1, Fp2, Fp6, Fp12, order, groupOrder } from '../src/fields';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const g1AddTestVector = require("./fixtures/g1_add.json")
@@ -9,6 +9,15 @@ const g2AddTestVector = require("./fixtures/g2_add.json")
 
 const g1MulTestVector = require("./fixtures/g1_mul.json")
 const g2MulTestVector = require("./fixtures/g2_mul.json")
+
+let zeroFp1 = new Fp1 (BigNumber.from(0))
+let oneFp1 = new Fp1 (BigNumber.from(1))
+let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
+let oneFp2 = new Fp2 (zeroFp1, oneFp1)
+let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
+let oneFp6 = new Fp6 (zeroFp2, zeroFp2, oneFp2)
+let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
+let oneFp12 = new Fp12 (zeroFp6, oneFp6)
 
 function createG1Point(xStr: string, yStr: string): point {
     return new point(
@@ -168,10 +177,106 @@ function pointDoubleTest() {
     )
 }
 
+function powTest() {
+    for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+        let f = new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X))
+
+        let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+
+        let powRes = powHelper(f, BigNumber.from(5), oneFp1) as Fp1
+
+        expect(
+            mulRes.eq(powRes)
+        ).to.equal(true)
+    }
+
+    for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+        let f = new Fp2(
+            new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+            new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+        )
+
+        let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+
+        let powRes = powHelper(f, BigNumber.from(5), oneFp2) as Fp2
+
+        expect(
+            mulRes.eq(powRes)
+        ).to.equal(true)
+    }
+
+    for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+        let f = new Fp6 (
+            new Fp2(
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+            ),
+            new Fp2(
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+            ),
+            new Fp2(
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+            )
+        )
+
+        let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+
+        let powRes = powHelper(f, BigNumber.from(5), oneFp6) as Fp6
+
+        expect(
+            mulRes.eq(powRes)
+        ).to.equal(true)
+    }
+
+    for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+        let f = new Fp12 (
+            new Fp6 (
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                ),
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                ),
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                )
+            ),
+            new Fp6 (
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                ),
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                ),
+                new Fp2(
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1X)),
+                    new Fp1(BigNumber.from(g1MulTestVector.g1_mul[i].p1Y))
+                )
+            )
+        )
+
+        let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+
+        let powRes = powHelper(f, BigNumber.from(5), oneFp6) as Fp12
+
+        expect(
+            mulRes.eq(powRes)
+        ).to.equal(true)
+    }
+}
+
 // g1AddTest()
 // g2AddTest()
 
 // g1MulTest()
 // g2MulTest()
 
-pointAtInfTest()
+// pointAtInfTest()
+// powTest()
