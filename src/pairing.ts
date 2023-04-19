@@ -3,6 +3,7 @@ import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, gro
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
 let zeroFp1 = new Fp1 (BigNumber.from(0))
+let oneFp1 = new Fp1 (BigNumber.from(1))
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
@@ -137,7 +138,7 @@ function pointMulHelper(scalar: BigNumber, base: point, accum: point): any {
 
 function pointMul(scalar: BigNumber, base: point) {
     if (
-        // base.isOnCurve() && 
+        base.isOnCurve() && 
         scalar.gt(BigNumber.from(0))) {
         // TODO: adding a zero point (an instance of point at infinity which its components is zero but its 
         // isInf flag is not necessarily true) {PointAtInfinity}
@@ -169,7 +170,7 @@ function pairing(p: point, q: point): Fp12 {
     console.log(q.isOnCurve())
     console.log(q.isInSubGroup())
     if (p.isOnCurve() && p.isInSubGroup() && q.isOnCurve() && q.isInSubGroup()) {
-        return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), zeroFp1) as Fp12;
+        return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), oneFp1) as Fp12;
     } else {
         // FIXME:
         // return null;
