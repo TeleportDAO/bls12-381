@@ -125,11 +125,8 @@ class Fp2 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
-        console.log("Fp2")
-        console.log("a1: ")
-        this.a1.displayInfo()
-        console.log("a0: ")
-        this.a0.displayInfo()
+        console.log("a1: ", this.a1)
+        console.log("a0: ", this.a0)
     }
     inv(): Fp2 {
         let factor = (
@@ -220,13 +217,9 @@ class Fp6 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo() {
-        console.log("Fp6")
-        console.log("a2: ")
-        this.a2.displayInfo()
-        console.log("a1: ")
-        this.a1.displayInfo()
-        console.log("a0: ")
-        this.a0.displayInfo()
+        console.log("a2: ", this.a2)
+        console.log("a1: ", this.a1)
+        console.log("a0: ", this.a0)
     }
     inv(): Fp6 {
         let t0 = (this.a0.mul(this.a0)).sub(this.a1.mul(this.a2).mulNonres())
@@ -307,11 +300,10 @@ class Fp12 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
-        console.log("Fp12")
-        console.log("a1: ")
-        this.a1.displayInfo()
-        console.log("a0: ")
-        this.a0.displayInfo()
+        console.log("fp12")
+        console.log("a1: ", this.a1)
+        console.log("a0: ", this.a0)
+        console.log("end of fp12")
     }
     inv(): Fp12 {
         console.log("Fp12 inv")
