@@ -134,7 +134,8 @@ let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
 // TODO: test 
 function untwist(fp2Point: point): point {
-    console.log("untwist...")
+    // FIXME: what if the point is point at infinity
+    // console.log("untwist...")
 
     let root = new Fp6(zeroFp2, oneFp2, zeroFp2)
     let fp2PointX = fp2Point.x as Fp2
@@ -150,13 +151,16 @@ function untwist(fp2Point: point): point {
     let forInvY = new Fp12(root, zeroFp6)
     wideY = wideY.mul(forInvY.inv())
 
-    console.log("...untwist")
+    // console.log("...untwist")
 
     return new point(wideX, wideY, false)
 }
 
 // function pointMul(scalar: BigNumber, base: point): point {
 function pointMul(scalar: BigNumber, base: point): point {
+    if (base.isInf) {
+        return base.pointAtInfinity()
+    }
     if (
         base.isOnCurve() && 
         scalar.gt(BigNumber.from(0))) {
