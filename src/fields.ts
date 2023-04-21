@@ -66,7 +66,7 @@ class Fp1 implements Fp {
 	constructor(a0: BigNumber){
       	this.a0 = a0;
     }
-  	displayInfo(){
+  	displayInfo() {
         console.log("a0: ", this.a0)
     }
     inv(): Fp1{
@@ -125,8 +125,11 @@ class Fp2 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
-        console.log("a1: ", this.a1)
-        console.log("a0: ", this.a0)
+        console.log("Fp2")
+        console.log("a1: ")
+        this.a1.displayInfo()
+        console.log("a0: ")
+        this.a0.displayInfo()
     }
     inv(): Fp2 {
         let factor = (
@@ -216,10 +219,14 @@ class Fp6 implements Fp {
     	this.a1 = a1;
       	this.a0 = a0;
     }
-  	displayInfo(){
-        console.log("a2: ", this.a2)
-        console.log("a1: ", this.a1)
-        console.log("a0: ", this.a0)
+  	displayInfo() {
+        console.log("Fp6")
+        console.log("a2: ")
+        this.a2.displayInfo()
+        console.log("a1: ")
+        this.a1.displayInfo()
+        console.log("a0: ")
+        this.a0.displayInfo()
     }
     inv(): Fp6 {
         let t0 = (this.a0.mul(this.a0)).sub(this.a1.mul(this.a2).mulNonres())
@@ -271,6 +278,7 @@ class Fp6 implements Fp {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
     mulNonres(): Fp6 {
+        console.log("Fp6 mul non res")
         return new Fp6(
             this.a1,
             this.a0, 
@@ -299,20 +307,34 @@ class Fp12 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
+<<<<<<< HEAD
         // console.log("fp12")
         console.log("a1: ");
         this.a1.displayInfo()
         console.log("a0: ");
         this.a0.displayInfo()
         // console.log("end of fp12")
+=======
+        console.log("Fp12")
+        console.log("a1: ")
+        this.a1.displayInfo()
+        console.log("a0: ")
+        this.a0.displayInfo()
+>>>>>>> e4926c706b0f10d2cde8b6ea7a08dbca57877e74
     }
     inv(): Fp12 {
+        console.log("Fp12 inv")
+        // this.a0.mul(this.a0).displayInfo()
+        // this.a1.mul(this.a1).mulNonres().displayInfo()
+
         let factor = 
             ((
                 this.a0.mul(this.a0)
             ).sub(
                 this.a1.mul(this.a1).mulNonres()
             )).inv()
+
+        console.log("Fp12 inv before return")    
         return new Fp12(
             // -1 * a1 * factor
             zeroFp6.sub(this.a1.mul(factor)),

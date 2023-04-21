@@ -2,7 +2,11 @@ import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
-import { pairing, miller } from "../src/pairing"
+
+import { pairing, pointMul, miller, doubleEval, addEval } from "../src/pairing"
+
+const g1AddTestVector = require("./fixtures/g1_add.json")
+const g2AddTestVector = require("./fixtures/g2_add.json")
 
 function calcPairing() {
     let mew1 = new point (
@@ -48,4 +52,36 @@ function calcPairing() {
     // console.log(pairingRes.eq(pairingRes2))
 }
 
-calcPairing()
+function calcAddEvalDoubleEval() {
+    let mew1 = new point (
+        fp1FromBigInt(BigNumber.from(g1AddTestVector.g1_add[0].p1X)),
+        fp1FromBigInt(BigNumber.from(g1AddTestVector.g1_add[0].p1Y)),
+        false 
+    )
+
+    let mew2 = new point (
+        new Fp2(
+            fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a1)),
+            fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a0))
+        ),
+        new Fp2(
+            fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a1)),
+            fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a0))
+        ),
+        false
+    )
+
+    let doubleEvalRes = doubleEval(mew2, mew1)
+    // let addEvalRes = addEval(mew2, mew2, mew1)
+
+    // console.log("result: ")
+
+    // console.log(doubleEvalRes.eq(addEvalRes))
+
+    // doubleEvalRes.displayInfo()
+    // addEvalRes.displayInfo()
+
+}
+
+// calcPairing()
+calcAddEvalDoubleEval()

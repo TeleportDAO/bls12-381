@@ -132,7 +132,10 @@ let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (zeroFp1, oneFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
+// TODO: test 
 function untwist(fp2Point: point): point {
+    console.log("untwist...")
+
     let root = new Fp6(zeroFp2, oneFp2, zeroFp2)
     let fp2PointX = fp2Point.x as Fp2
     let wideXA0 = new Fp6(zeroFp2, zeroFp2, fp2PointX)
@@ -146,6 +149,8 @@ function untwist(fp2Point: point): point {
     let wideY = new Fp12(zeroFp6, wideYA0)
     let forInvY = new Fp12(root, zeroFp6)
     wideY = wideY.mul(forInvY.inv())
+
+    console.log("...untwist")
 
     return new point(wideX, wideY, false)
 }
