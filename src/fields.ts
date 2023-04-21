@@ -307,20 +307,11 @@ class Fp12 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
-<<<<<<< HEAD
-        // console.log("fp12")
-        console.log("a1: ");
-        this.a1.displayInfo()
-        console.log("a0: ");
-        this.a0.displayInfo()
-        // console.log("end of fp12")
-=======
         console.log("Fp12")
         console.log("a1: ")
         this.a1.displayInfo()
         console.log("a0: ")
         this.a0.displayInfo()
->>>>>>> e4926c706b0f10d2cde8b6ea7a08dbca57877e74
     }
     inv(): Fp12 {
         console.log("Fp12 inv")
