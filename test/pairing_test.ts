@@ -28,18 +28,23 @@ function calcPairing() {
         false
     )
 
-    // let pairingRes = pairing(pointMul(BigNumber.from(11), mew1), pointMul(BigNumber.from(13), mew2))
-    // let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(143), mew2))
+    let pairingRes = pairing(pointMul(BigNumber.from(11), mew1), pointMul(BigNumber.from(13), mew2))
+    let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(143), mew2))
+
+    pairingRes.displayInfo()
+    pairingRes2.displayInfo()
 
     // let pairingRes = pairing(mew1, mew2)
+    // console.log(pairingRes.displayInfo())
     // let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(3), mew2))
     // pairingRes = pairingRes.mul(pairingRes).mul(pairingRes)
-
-    let pairingRes = pairing(mew1, mew2)
-    let pairingRes2 = pairing(mew1.pointNegate(), mew2)
-    pairingRes.inv().displayInfo()
-    pairingRes2.displayInfo()
-    console.log(pairingRes.mul(pairingRes2).eq(pairingRes.zero()))
+    // pairingRes2.displayInfo()
+    
+    // let pairingRes = pairing(mew1, mew2)
+    // let pairingRes2 = pairing(mew1.pointNegate(), mew2)
+    // pairingRes.inv().displayInfo()
+    // pairingRes2.displayInfo()
+    // console.log(pairingRes.mul(pairingRes2).eq(pairingRes.zero()))
 
     // console.log("result: ")
     // pairingRes.a1.displayInfo()
@@ -49,7 +54,7 @@ function calcPairing() {
     // pairingRes2.a1.displayInfo()
     // pairingRes2.a0.displayInfo()
     // // pairingRes.displayInfo()
-    // console.log(pairingRes.eq(pairingRes2))
+    console.log(pairingRes.eq(pairingRes2))
 }
 
 function calcAddEvalDoubleEval() {

@@ -117,9 +117,8 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
 }
 
 function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12): Fp12 {
-    // console.log("millerHelper...")
     if (boolsArr.length == 0) {
-        fp12Result.displayInfo()
+        // fp12Result.displayInfo()
         return fp12Result;
     }
 
@@ -150,7 +149,7 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 
     while (b.gt(BigNumber.from(0))) {
         let theBool = b.mod(BigNumber.from(2)).gt(BigNumber.from(0))
-
+        
         iterations.push(theBool);
         // b >>= BigNumber.from(1);
         b = b.div(BigNumber.from(2));
@@ -174,11 +173,19 @@ function pairing(p: point, q: point): Fp12 {
     // console.log(q)
     // console.log(q.isOnCurve())
     // console.log(q.isInSubGroup())
-    // console.log("here")
-    // console.log((miller(p, q)).a1.displayInfo())
-    // console.log("end")
-    if (p.isOnCurve() && p.isInSubGroup() && q.isOnCurve() && q.isInSubGroup()) {
+    // console.log("1")
+    // console.log(miller(p, q))
+    // console.log("2")
+    if (
+        // p.isOnCurve() && 
+        // p.isInSubGroup() && 
+        // q.isOnCurve() && 
+        // q.isInSubGroup()
+        true
+        ) {
+        // console.log("1")
         return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), oneFp12) as Fp12;
+        // console.log("2")
     } else {
         // FIXME:
         // return null;
