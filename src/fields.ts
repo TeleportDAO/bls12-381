@@ -299,10 +299,12 @@ class Fp12 implements Fp {
       	this.a0 = a0;
     }
   	displayInfo(){
-        console.log("fp12")
-        console.log("a1: ", this.a1)
-        console.log("a0: ", this.a0)
-        console.log("end of fp12")
+        // console.log("fp12")
+        console.log("a1: ");
+        this.a1.displayInfo()
+        console.log("a0: ");
+        this.a0.displayInfo()
+        // console.log("end of fp12")
     }
     inv(): Fp12 {
         let factor = 

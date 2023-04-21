@@ -76,7 +76,7 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
 }
 
 function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12): Fp12 {
-    console.log("millerHelper...")
+    // console.log("millerHelper...")
     if (boolsArr.length == 0) {
         fp12Result.displayInfo()
         return fp12Result;
@@ -120,12 +120,15 @@ function pairing(p: point, q: point): Fp12 {
     // if (p == PointAtInfinity || q == PointAtInfinity) {
     //     return null;
     // }
-    console.log(p)
-    console.log(p.isOnCurve())
-    console.log(p.isInSubGroup())
-    console.log(q)
-    console.log(q.isOnCurve())
-    console.log(q.isInSubGroup())
+    // console.log(p)
+    // console.log(p.isOnCurve())
+    // console.log(p.isInSubGroup())
+    // console.log(q)
+    // console.log(q.isOnCurve())
+    // console.log(q.isInSubGroup())
+    // console.log("here")
+    // console.log((miller(p, q)).a1.displayInfo())
+    // console.log("end")
     if (p.isOnCurve() && p.isInSubGroup() && q.isOnCurve() && q.isInSubGroup()) {
         return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), oneFp12) as Fp12;
     } else {

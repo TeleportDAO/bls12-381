@@ -1,10 +1,8 @@
-import { untwist, pointDouble, pointAdd, point } from "../src/points"
+import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 import { pairing, miller } from "../src/pairing"
-
-
 
 function calcPairing() {
     let mew1 = new point (
@@ -26,12 +24,28 @@ function calcPairing() {
         false
     )
 
-    let pairingRes = pairing(mew1, mew2)
+    // let pairingRes = pairing(pointMul(BigNumber.from(11), mew1), pointMul(BigNumber.from(13), mew2))
+    // let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(143), mew2))
 
-    console.log("result: ")
-    pairingRes.a1.displayInfo()
-    pairingRes.a0.displayInfo()
-    // pairingRes.displayInfo()
+    // let pairingRes = pairing(mew1, mew2)
+    // let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(3), mew2))
+    // pairingRes = pairingRes.mul(pairingRes).mul(pairingRes)
+
+    let pairingRes = pairing(mew1, mew2)
+    let pairingRes2 = pairing(mew1.pointNegate(), mew2)
+    pairingRes.inv().displayInfo()
+    pairingRes2.displayInfo()
+    console.log(pairingRes.mul(pairingRes2).eq(pairingRes.zero()))
+
+    // console.log("result: ")
+    // pairingRes.a1.displayInfo()
+    // pairingRes.a0.displayInfo()
+
+    // console.log("result: ")
+    // pairingRes2.a1.displayInfo()
+    // pairingRes2.a0.displayInfo()
+    // // pairingRes.displayInfo()
+    // console.log(pairingRes.eq(pairingRes2))
 }
 
 calcPairing()
