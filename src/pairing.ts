@@ -177,11 +177,11 @@ function pairing(p: point, q: point): Fp12 {
     // console.log(miller(p, q))
     // console.log("2")
     if (
-        // p.isOnCurve() && 
-        // p.isInSubGroup() && 
-        // q.isOnCurve() && 
-        // q.isInSubGroup()
-        true
+        p.isOnCurve() && 
+        p.isInSubGroup() && 
+        q.isOnCurve() && 
+        q.isInSubGroup()
+        // true
         ) {
         // console.log("1")
         return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), oneFp12) as Fp12;
