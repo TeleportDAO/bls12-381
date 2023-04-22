@@ -1,5 +1,5 @@
 import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
-import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
+import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 
@@ -44,8 +44,35 @@ function calcPairing() {
         false
     )
 
-    let pairingRes = pairing(pointMul(BigNumber.from(11), mew1), pointMul(BigNumber.from(13), mew2))
-    let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(143), mew2))
+    // let pairingRes = pairing(
+    //     pointMul(BigNumber.from("966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406"), mew1), 
+    //     pointMul(BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533"), mew2)
+    // )
+    // let pairingRes2 = pairing(
+    //     mew1, 
+    //     pointMul(
+    //         (
+    //             BigNumber.from("966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406").mul(
+    //                 BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533")
+    //             )
+    //         ).mod(groupOrder)
+    //         , 
+    //         mew2
+    //     )
+    // )
+
+    let pairingRes = pairing(
+        pointMul(BigNumber.from(-3), mew1), 
+        pointMul(BigNumber.from(-2), mew2)
+    )
+    let pairingRes2 = pairing(
+        mew1, 
+        pointMul(
+            BigNumber.from(6)
+            , 
+            mew2
+        )
+    )
 
     pairingRes.displayInfo()
     pairingRes2.displayInfo()

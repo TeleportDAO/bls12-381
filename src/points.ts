@@ -178,8 +178,7 @@ function pointMul(scalar: BigNumber, base: point): point {
     } else if (base.isOnCurve() && scalar.eq(BigNumber.from(0))) {
         // return null;
     } else if (base.isOnCurve() && scalar.lte(BigNumber.from(0))) {
-        // TODO
-        // return pointMulHelper(scalar.mul(BigNumber.from(-1)), pointNegate(base), PointAtInfinity);
+        return pointMulHelper(scalar.mul(BigNumber.from(-1)), base.pointNegate(), base.pointAtInfinity());
     }
 
     // FIXME:
