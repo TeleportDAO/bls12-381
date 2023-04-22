@@ -71,7 +71,7 @@ class point {
     }
     pointNegate(): point {
         return new point(
-            this.x.zero().sub(this.x),
+            this.x,
             this.y.zero().sub(this.y),
             this.isInf
         )
