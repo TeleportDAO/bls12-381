@@ -74,8 +74,8 @@ function calcPairing() {
         )
     )
 
-    pairingRes.displayInfo()
-    pairingRes2.displayInfo()
+    // pairingRes.displayInfo()
+    // pairingRes2.displayInfo()
 
     // let pairingRes = pairing(mew1, mew2)
     // console.log(pairingRes.displayInfo())
@@ -87,7 +87,8 @@ function calcPairing() {
     // let pairingRes2 = pairing(mew1.pointNegate(), mew2)
     // pairingRes.inv().displayInfo()
     // pairingRes2.displayInfo()
-    // console.log(pairingRes.mul(pairingRes2).eq(pairingRes.zero()))
+    // pairingRes.mul(pairingRes2).displayInfo()
+    // console.log(pairingRes.mul(pairingRes2).equalOne())
 
     // console.log("result: ")
     // pairingRes.a1.displayInfo()
