@@ -3,6 +3,7 @@ import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields"
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { order } from "./fields"
+import { error } from "console";
 
 class point {
     public x: Fp;
@@ -176,13 +177,12 @@ function pointMul(scalar: BigNumber, base: point): point {
         // else
         //     return pointMulHelper(scalar, base, new point(base.x.zero(), base.x.zero()));
     } else if (base.isOnCurve() && scalar.eq(BigNumber.from(0))) {
-        // return null;
+        return base.pointAtInfinity();
     } else if (base.isOnCurve() && scalar.lte(BigNumber.from(0))) {
         return pointMulHelper(scalar.mul(BigNumber.from(-1)), base.pointNegate(), base.pointAtInfinity());
     }
 
-    // FIXME:
-    return new point(base.x.zero(), base.y.zero(), false)
+    throw "error: unhandled"
 }
   
 function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
