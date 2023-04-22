@@ -1,5 +1,5 @@
 import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
-import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
+import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 
@@ -44,11 +44,33 @@ function calcPairing() {
         false
     )
 
-    let pairingRes = pairing(pointMul(BigNumber.from(11), mew1), pointMul(BigNumber.from(13), mew2))
-    let pairingRes2 = pairing(mew1, pointMul(BigNumber.from(143), mew2))
+    // let pairingRes = pairing(
+    //     pointMul(BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533"), mew1), 
+    //     pointMul(BigNumber.from("966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406"), mew2)
+    // )
+    // let pairingRes2 = pairing(
+    //     mew1, 
+    //     pointMul(
+    //         BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533").mul(
+    //             "966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406"
+    //         ),
+    //     mew2)
+    // )
 
-    pairingRes.displayInfo()
-    pairingRes2.displayInfo()
+    let pairingRes = pairing(
+        pointMul(BigNumber.from("-1"), mew1), 
+        pointMul(BigNumber.from("-2"), mew2)
+    )
+    let pairingRes2 = pairing(
+        mew1, 
+        pointMul(
+            BigNumber.from("2"),
+            mew2
+        )
+    )
+
+    // pairingRes.displayInfo()
+    // pairingRes2.displayInfo()
 
     // let pairingRes = pairing(mew1, mew2)
     // console.log(pairingRes.displayInfo())
@@ -60,7 +82,8 @@ function calcPairing() {
     // let pairingRes2 = pairing(mew1.pointNegate(), mew2)
     // pairingRes.inv().displayInfo()
     // pairingRes2.displayInfo()
-    // console.log(pairingRes.mul(pairingRes2).eq(pairingRes.zero()))
+    // pairingRes.mul(pairingRes2).displayInfo()
+    // console.log(pairingRes.mul(pairingRes2).equalOne())
 
     // console.log("result: ")
     // pairingRes.a1.displayInfo()
