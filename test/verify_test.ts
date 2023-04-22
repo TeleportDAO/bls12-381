@@ -81,8 +81,8 @@ function verify() {
     console.log(S.isInSubGroup())
 
 
-    let pairingRes = pairing(P.pointNegate(), Hm)
-    // let pairingRes = pairing(P, Hm)
+    // let pairingRes = pairing(P.pointNegate(), Hm)
+    let pairingRes = pairing(P, Hm)
     let pairingRes2 = pairing(G, S)
 
     pairingRes.displayInfo()
