@@ -5,27 +5,18 @@ import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 
 import { pairing, miller, doubleEval, addEval } from "../src/pairing"
 
+const bls = require('@noble/bls12-381');
+
 const g1AddTestVector = require("./fixtures/g1_add.json")
 const g2AddTestVector = require("./fixtures/g2_add.json")
 
-function verify() {
+async function verify() {
+
     let P = new point (
         fp1FromBigInt(BigNumber.from("3071902358779104425805220059913391042958977442368743450008922736970201383908820407429457646333339330346464018568299")),
         fp1FromBigInt(BigNumber.from("208729469830998646909339719617829960147637284847029296662162145937938053125975650713155855600870449370845588704920")),
         false 
     )
-
-    // let Hm = new point (
-    //     new Fp2(
-    //         fp1FromBigInt(BigNumber.from("2357556650209231585002654467241659159063900268360871707630297623496109598089657193704186795702074478622917895656384")),
-    //         fp1FromBigInt(BigNumber.from("3953605227375649587553282126565793338489478933421008011676219910137022551750442290689597974472294891051907650111197"))
-    //     ),
-    //     new Fp2(
-    //         fp1FromBigInt(BigNumber.from("2636356076845621042340998927146453389877292467744110912831694031602037452225656755036030562878672313329396684758868")),
-    //         fp1FromBigInt(BigNumber.from("2495601009524620857707705364800595215702994859258454180584354350679476916692161325761009870302795857111988758374874"))
-    //     ),
-    //     false
-    // )
 
     let Hm = new point (
         new Fp2(
@@ -44,9 +35,6 @@ function verify() {
 
     // console.log("P.pointNegate()x: ", P.pointNegate().x)
     // console.log("P.pointNegate()y: ", P.pointNegate().y)
-
-    
-    
 
     console.log(P.isOnCurve())
     console.log(Hm.isOnCurve())
@@ -73,13 +61,11 @@ function verify() {
         false
     )
 
-
     console.log(G.isOnCurve())
     console.log(S.isOnCurve())
 
     console.log(G.isInSubGroup())
     console.log(S.isInSubGroup())
-
 
     // let pairingRes = pairing(P.pointNegate(), Hm)
     let pairingRes = pairing(P, Hm)
@@ -90,4 +76,47 @@ function verify() {
     console.log(pairingRes.eq(pairingRes2))
 }
 
-verify()
+async function messageVerification() {
+    let hashedMessage = "01a6ba2f9a11fa5598b2d8ace0fbe0a0eacb65deceb476fbbcb64fd24557c2f4"
+    let moc = (await bls.PointG2.hashToCurve(hashedMessage)).toAffine()
+    let privateKey = BigNumber.from("0x63eda653299d7d483339d80809a1d80553bda402fffe5bfeffaaffff00000001")
+
+    let G = new point (
+        fp1FromBigInt(BigNumber.from("3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507")),
+        fp1FromBigInt(BigNumber.from("1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569")),
+        false 
+    )
+
+    let P = pointMul(privateKey, G)
+
+    let Hm = new point (
+        new Fp2(
+            fp1FromBigInt(BigNumber.from(moc[0].c1.value)),
+            fp1FromBigInt(BigNumber.from(moc[0].c0.value))
+        ),
+        new Fp2(
+            fp1FromBigInt(BigNumber.from(moc[1].c1.value)),
+            fp1FromBigInt(BigNumber.from(moc[1].c0.value))
+        ),
+        false
+    )
+
+    let S = pointMul(privateKey, Hm)
+
+    if (!P.isOnCurve() || !P.isInSubGroup())
+        throw("invalid publickey")
+    if (!Hm.isOnCurve() || !Hm.isInSubGroup())
+        throw("invalid message")
+    if (!S.isOnCurve() || !S.isInSubGroup())
+        throw("invalid signature")
+    if (!G.isOnCurve() || !G.isInSubGroup())
+        throw("invalid generator point")
+
+    let pairingRes = pairing(P.pointNegate(), Hm)
+    let pairingRes2 = pairing(G, S)
+
+    console.log(pairingRes.mul(pairingRes2).equalOne())
+}
+
+// verify()
+messageVerification()

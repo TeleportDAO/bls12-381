@@ -1,7 +1,7 @@
 import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
-import { pairing, pointMul, miller } from "../src/pairing"
+import { pairing, miller } from "../src/pairing"
 
 
 
