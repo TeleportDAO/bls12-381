@@ -356,6 +356,7 @@ class Fp12 implements Fp {
         return zeroFp12
     }
 }
+
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (zeroFp6, oneFp6)
 
