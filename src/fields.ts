@@ -512,6 +512,7 @@ class Fp12 implements Fp {
         return t2_t5_pow_q2.multiply(t4_t1_pow_q3).multiply(t6_t1c_pow_q1).multiply(t7_t3c_t1);
     }
 }
+
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (zeroFp6, oneFp6)
 

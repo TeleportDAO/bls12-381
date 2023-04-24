@@ -1,9 +1,8 @@
-
-import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields"
-import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields"
 import { BigNumber } from "@ethersproject/bignumber";
-import { order } from "./fields"
-import { error } from "console";
+import { order } from "./fields";
+import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
+import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
+// import { error } from "console";
 
 class point {
     public x: Fp;
@@ -50,6 +49,9 @@ class point {
         }
     }
     isOnCurveG1(): Boolean {
+        if (this.isInf) 
+            return false;
+
         return this.y.mul(this.y).eq(
             this.x.mul(
                 this.x.mul(this.x)
@@ -60,8 +62,9 @@ class point {
     }
 
     isOnCurveG2(): Boolean {
-        // FIXME: fix this part 
-        // TODO check point at infinity
+        if (this.isInf) 
+            return false;
+
         return this.y.mul(this.y).eq(
             this.x.mul(
                 this.x.mul(this.x)
@@ -136,7 +139,6 @@ let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 // TODO: test 
 function untwist(fp2Point: point): point {
     // FIXME: what if the point is point at infinity
-    // console.log("untwist...")
 
     let root = new Fp6(zeroFp2, oneFp2, zeroFp2)
     let fp2PointX = fp2Point.x as Fp2
@@ -152,37 +154,26 @@ function untwist(fp2Point: point): point {
     let forInvY = new Fp12(root, zeroFp6)
     wideY = wideY.mul(forInvY.inv())
 
-    // console.log("...untwist")
-
     return new point(wideX, wideY, false)
 }
 
-// function pointMul(scalar: BigNumber, base: point): point {
 function pointMul(scalar: BigNumber, base: point): point {
     if (base.isInf) {
         return base.pointAtInfinity()
     }
     if (
         base.isOnCurve() && 
-        scalar.gt(BigNumber.from(0))) {
-        // TODO: adding a zero point (an instance of point at infinity which its components is zero but its 
-        // isInf flag is not necessarily true) {PointAtInfinity}
-        // return pointMulHelper(scalar, base, PointAtInfinity);
-
+        scalar.gt(BigNumber.from(0))
+    ) {
         return pointMulHelper(scalar, base, new point(base.x.zero(), base.x.zero(), true));
-
-        // if (base.x instanceof BigNumber) {
-        //     return pointMulHelper(scalar, base, new point(BigNumber.from(0), BigNumber.from(0)));
-        // }
-        // else
-        //     return pointMulHelper(scalar, base, new point(base.x.zero(), base.x.zero()));
     } else if (base.isOnCurve() && scalar.eq(BigNumber.from(0))) {
         return base.pointAtInfinity();
     } else if (base.isOnCurve() && scalar.lte(BigNumber.from(0))) {
         return pointMulHelper(scalar.mul(BigNumber.from(-1)), base.pointNegate(), base.pointAtInfinity());
     }
 
-    throw "error: unhandled"
+    // TODO: add some assert validity function to check the inputs first
+    throw "error: is not on curve"
 }
   
 function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
