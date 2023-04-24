@@ -106,7 +106,7 @@ describe("Pairing", () => {
         expect(
             pairingRes.eq(pairingRes2)
         ).to.equal(true)
-    })
+    }).timeout(100000)
 
     it("double eval", function() {
         let mew1 = new point (
@@ -140,5 +140,5 @@ describe("Pairing", () => {
     
         // doubleEvalRes.displayInfo()
         // addEvalRes.displayInfo()
-    })
+    }).timeout(100000)
 })

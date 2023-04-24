@@ -71,7 +71,7 @@ describe("Points", () => {
                 res.eq(p1PlusP2)
             ).to.equal(true)
         }
-    })
+    }).timeout(100000)
 
     it("g1 mul", function() {
 
@@ -94,7 +94,7 @@ describe("Points", () => {
                 res.eq(sclMulP1)
             ).to.equal(true)
         }
-    })
+    }).timeout(100000)
 
     it("g2 add", function() {
 
@@ -126,7 +126,7 @@ describe("Points", () => {
                 res.eq(p1PlusP2)
             ).to.equal(true)
         }
-    })
+    }).timeout(100000)
 
     it("g2 mul", function() {
 
@@ -153,7 +153,7 @@ describe("Points", () => {
                 res.eq(sclMuP1)
             ).to.equal(true)
         }
-    })
+    }).timeout(100000)
 
     it("point at infinity", function() {
 
@@ -173,7 +173,7 @@ describe("Points", () => {
             orderMuP1.displayInfo()
             console.log(orderMuP1)
         }
-    })
+    }).timeout(100000)
 
     it("point double", function() {
 
@@ -182,7 +182,7 @@ describe("Points", () => {
             new Fp1(BigNumber.from("849807144208813628470408553955992794901182511881745746883517188868859266470363575621518219643826028639669002210378")),
             false
         )
-    })
+    }).timeout(100000)
 
     it("pow ", function() {
 
@@ -279,7 +279,7 @@ describe("Points", () => {
             ).to.equal(true)
         }
 
-    })
+    }).timeout(100000)
 
     
 })

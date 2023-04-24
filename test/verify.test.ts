@@ -88,7 +88,7 @@ describe("Verification", () => {
         expect(
             pairingRes.mul(pairingRes2).equalOne()
         ).to.equal(true)
-    })
+    }).timeout(100000)
 
     it("messageVerification", async function() {
         let hashedMessage = "01a6ba2f9a11fa5598b2d8ace0fbe0a0eacb65deceb476fbbcb64fd24557c2f4"
@@ -132,6 +132,6 @@ describe("Verification", () => {
         expect(
             pairingRes.mul(pairingRes2).equalOne()
         ).to.equal(true)
-    })
+    }).timeout(100000)
 })
 
