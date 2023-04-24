@@ -4,7 +4,7 @@
   "description": "an implementation of bls12-381 in typescript",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register test/point_test.ts"
+    "test": "mocha -r ts-node/register test/*.test.ts"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,6 @@
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
-    "@types/jasmine": "^4.3.1",
-    "@types/jest": "^29.5.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",
