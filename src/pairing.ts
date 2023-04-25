@@ -137,7 +137,10 @@ function pairing(p: point, q: point): Fp12 {
         bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
         let millerRes = miller(p, q)
         let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
-        let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
+        console.log("start", new Date())
+        // let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
+        let powRes = millerRes.finalExponentiate()
+        console.log("end", new Date())
         
         return powRes;
     } else {

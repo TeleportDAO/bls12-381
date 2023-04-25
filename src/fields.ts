@@ -69,6 +69,7 @@ interface Fp{
     fromBigInt(x: bigint): any;
     zero(): any;
     frobeniusMap(p: number): any;
+    negate(): any;
 }
 
 class Fp1 implements Fp {
@@ -130,6 +131,12 @@ class Fp1 implements Fp {
     frobeniusMap(p: number): Fp1{
         throw "error un-implemented"
     }
+    negate(): Fp1 {
+        return new Fp1(-this.a0)
+    }
+    // invert(): Fp {
+    //     return new Fp1(invert(this.a0));
+    // }
 }
 
 let zeroFp1 = new Fp1 (0n)
@@ -218,6 +225,17 @@ class Fp2 implements Fp {
                 FP2_FROBENIUS_COEFFICIENTS[p % 2]
             )
         )
+    }
+    negate(): Fp2 {
+        return new Fp2(this.a0.negate(), this.a1.negate());
+    }
+    square() {
+        const c0 = this.a0;
+        const c1 = this.a0;
+        const a = c0.add(c1);
+        const b = c0.sub(c1);
+        const c = c0.add(c0);
+        return new Fp2(a.mul(b), c.mul(c1));
     }
 }
 
@@ -342,6 +360,9 @@ class Fp6 implements Fp {
             this.a2.frobeniusMap(p).mul(FP6_FROBENIUS_COEFFICIENTS_2[p % 6])
         )
     }
+    negate(): Fp6 {
+        return new Fp6(this.a0.negate(), this.a1.negate(), this.a2.negate());
+    }
 }
 
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
@@ -402,6 +423,9 @@ class Fp12 implements Fp {
             this.a1.mulScalar(y)
         )
     }
+    div(y: Fp12): Fp12 {
+        return this.mul(y.inv());
+    }
     equalOne(): Boolean {
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
     }
@@ -423,7 +447,101 @@ class Fp12 implements Fp {
         const coeff = FP12_FROBENIUS_COEFFICIENTS[p % 12];
         return new Fp12(r0, new Fp6(a0.mul(coeff), a1.mul(coeff), a2.mul(coeff)));
     }
+    negate(): Fp12 {
+        return new Fp12(this.a0.negate(), this.a1.negate());
+    }
+    conjugate(): Fp12 {
+        return new Fp12(this.a0, this.a1.negate());
+    }
+    private Fp4Square(a: Fp2, b: Fp2): { first: Fp2; second: Fp2 } {
+        const a2 = a.square();
+        const b2 = b.square();
+        return {
+          first: b2.mulNonres().add(a2), // b² * Nonresidue + a²
+          second: a.add(b).square().sub(a2).sub(b2), // (a + b)² - a² - b²
+        };
+    }
+
+    private cyclotomicSquare(): Fp12 {
+        const { a0: c0c0, a1: c0c1, a2: c0c2 } = this.a0;
+        const { a0: c1c0, a1: c1c1, a2: c1c2 } = this.a1;
+        const { first: t3, second: t4 } = this.Fp4Square(c0c0, c1c1);
+        const { first: t5, second: t6 } = this.Fp4Square(c1c0, c0c2);
+        const { first: t7, second: t8 } = this.Fp4Square(c0c1, c1c2);
+        let t9 = t8.mulNonres(); // T8 * (u + 1)
+        return new Fp12(
+            new Fp6(
+            t3.sub(c0c0).mulScalar(2n).add(t3), // 2 * (T3 - c0c0)  + T3
+            t5.sub(c0c1).mulScalar(2n).add(t5), // 2 * (T5 - c0c1)  + T5
+            t7.sub(c0c2).mulScalar(2n).add(t7)
+            ), // 2 * (T7 - c0c2)  + T7
+            new Fp6(
+            t9.add(c1c0).mulScalar(2n).add(t9), // 2 * (T9 + c1c0) + T9
+            t4.add(c1c1).mulScalar(2n).add(t4), // 2 * (T4 + c1c1) + T4
+            t6.add(c1c2).mulScalar(2n).add(t6)
+            )
+        ); // 2 * (T6 + c1c2) + T6
+    }
+
+    private cyclotomicExp(n: bigint) {
+        let z = oneFp12;
+        for (let i = BLS_X_LEN - 1; i >= 0; i--) {
+            z = z.cyclotomicSquare();
+            if (bitGet(n, i)) z = z.mul(this);
+          }
+        return z;
+    }
+
+    finalExponentiate() {
+        const t0 = this.frobeniusMap(6).div(this);
+        const t1 = t0.frobeniusMap(2).mul(t0);
+        const t2 = t1.cyclotomicExp(curveX).conjugate();
+        const t3 = t1.cyclotomicSquare().conjugate().mul(t2);
+        const t4 = t3.cyclotomicExp(curveX).conjugate();
+        const t5 = t4.cyclotomicExp(curveX).conjugate();
+        const t6 = t5.cyclotomicExp(curveX).conjugate().mul(t2.cyclotomicSquare());
+        const t7 = t6.cyclotomicExp(curveX).conjugate();
+        const t2_t5_pow_q2 = t2.mul(t5).frobeniusMap(2);
+        const t4_t1_pow_q3 = t4.mul(t1).frobeniusMap(3);
+        const t6_t1c_pow_q1 = t6.mul(t1.conjugate()).frobeniusMap(1);
+        const t7_t3c_t1 = t7.mul(t3.conjugate()).mul(t1);
+        return t2_t5_pow_q2.mul(t4_t1_pow_q3).mul(t6_t1c_pow_q1).mul(t7_t3c_t1);
+    }
 }
+
+const curveX = 0xd201000000010000n
+
+function bitLen(n: bigint) {
+    let len;
+    for (len = 0; n > 0n; n >>= 1n, len += 1);
+    return len;
+}
+
+const BLS_X_LEN = bitLen(curveX);
+
+function bitGet(n: bigint, pos: number) {
+    return (n >> BigInt(pos)) & 1n;
+}
+
+// function invert(number: bigint): bigint {
+//     if (number === 0n) {
+//         throw new Error(`invert: expected positive integers`);
+//     }
+//     let a = mod(number, order);
+//     let b = order;
+//     let x = 0n, y = 1n, u = 1n, v = 0n;
+//     while (a !== 0n) {
+//         const q = b / a;
+//         const r = b % a;
+//         const m = x - u * q;
+//         const n = y - v * q;
+//         b = a, a = r, x = u, y = v, u = m, v = n;
+//     }
+//     const gcd = b;
+//     if (gcd !== 1n) throw new Error('invert: does not exist');
+//     return x % order;
+// }
+
 
 const FP2_FROBENIUS_COEFFICIENTS = [
     buildFp1(0x1n),

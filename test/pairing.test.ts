@@ -10,7 +10,7 @@ const g1AddTestVector = require("./fixtures/g1_add.json")
 const g2AddTestVector = require("./fixtures/g2_add.json")
 
 
-describe("Pairing", () => {
+describe.only("Pairing", () => {
 
     it("pairing", function() {
 
