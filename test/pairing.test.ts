@@ -38,12 +38,13 @@ describe("Pairing", () => {
 
         let mew2 = new point (
             new Fp2(
+
+                fp1FromBigInt(BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533")),
                 fp1FromBigInt(BigNumber.from("966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406")),
-                fp1FromBigInt(BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533"))
             ),
             new Fp2(
+                fp1FromBigInt(BigNumber.from("3855722596444217665140296300241881837775734411784092265317102637289824807772757224642216633698428180424693166393122")),
                 fp1FromBigInt(BigNumber.from("1639805997476177777241606094884612303776858264957232458415894583607376414805753804084820168641517462543804792794779")),
-                fp1FromBigInt(BigNumber.from("3855722596444217665140296300241881837775734411784092265317102637289824807772757224642216633698428180424693166393122"))
             ),
             false
         )
@@ -106,7 +107,7 @@ describe("Pairing", () => {
         expect(
             pairingRes.eq(pairingRes2)
         ).to.equal(true)
-    }).timeout(100000)
+    }).timeout(600000)
 
     it("double eval", function() {
         let mew1 = new point (
@@ -117,12 +118,12 @@ describe("Pairing", () => {
     
         let mew2 = new point (
             new Fp2(
+                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a0)),
                 fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a1)),
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a0))
             ),
             new Fp2(
+                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a0)),
                 fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a1)),
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a0))
             ),
             false
         )

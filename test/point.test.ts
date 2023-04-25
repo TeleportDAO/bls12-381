@@ -13,11 +13,11 @@ const g2MulTestVector = require("./fixtures/g2_mul.json")
 let zeroFp1 = new Fp1 (BigNumber.from(0))
 let oneFp1 = new Fp1 (BigNumber.from(1))
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (zeroFp1, oneFp1)
+let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
-let oneFp6 = new Fp6 (zeroFp2, zeroFp2, oneFp2)
+let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
-let oneFp12 = new Fp12 (zeroFp6, oneFp6)
+let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 function createG1Point(xStr: string, yStr: string): point {
     return new point(
@@ -35,12 +35,12 @@ function createG2Point(
 ): point {
     return new point(
         new Fp2(
+            new Fp1(BigNumber.from(xStr_a0)),
             new Fp1(BigNumber.from(xStr_a1)),
-            new Fp1(BigNumber.from(xStr_a0))
         ),
         new Fp2(
+            new Fp1(BigNumber.from(yStr_a0)),
             new Fp1(BigNumber.from(yStr_a1)),
-            new Fp1(BigNumber.from(yStr_a0))
         ),
         false
     )
