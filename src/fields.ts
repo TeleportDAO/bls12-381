@@ -133,7 +133,7 @@ class Fp2 implements Fp {
     	this.a1 = a1;
     }
   	displayInfo(){
-        console.log("a1: ", this.a0)
+        console.log("a0: ", this.a0)
         console.log("a1: ", this.a1)
     }
     inv(): Fp2 {

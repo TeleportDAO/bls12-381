@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
 import { untwist, pointDouble, pointAdd, powHelper, point } from "./points"
@@ -18,7 +19,7 @@ function doubleEval(fp2Point: point, fpPoint: point) {
     let slope = (
         wideR.x.mul(wideR.x).mul(fp12FromBigInt(3n))
     ).mul(
-        wideR.y.mul(fp12FromBigInt(3n)).inv()
+        wideR.y.mul(fp12FromBigInt(2n)).inv()
     )
     let v = wideR.y.sub(
         slope.mul(wideR.x)
@@ -80,7 +81,8 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     }
 }
 
-function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12): Fp12 {
+
+function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: boolean[], fp12Result: Fp12): Fp12 {
     if (boolsArr.length == 0) {
         return fp12Result;
     }
@@ -100,7 +102,7 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
 
 function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 
-    let iterations : Boolean[] = [];
+    let iterations : boolean[] = [];
 
     let b = 0xd201000000010000n
 
@@ -109,7 +111,7 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
         
         iterations.push(theBool);
         // b >>= BigNumber.from(1);
-        b = b / 2n;
+        b = b >> 1n;
     }
 
     iterations.reverse().splice(0, 1); // remove first element
@@ -130,8 +132,14 @@ function pairing(p: point, q: point): Fp12 {
         p.isInSubGroup() && 
         q.isOnCurve() && 
         q.isInSubGroup()
-        ) {
-        return powHelper(miller(p, q), ((order ^ (12n)) - (1n)) / (groupOrder), oneFp12) as Fp12;
+    ) {
+        let bigNumberOrder = BigNumber.from(order.toString())
+        bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
+        let millerRes = miller(p, q)
+        let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
+        let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
+        
+        return powRes;
     } else {
         return zeroFp12;
     }

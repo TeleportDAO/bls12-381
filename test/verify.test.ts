@@ -14,24 +14,6 @@ const g2AddTestVector = require("./fixtures/g2_add.json")
 describe("Verification", () => {
 
     it.only("verify", function() {
-
-        let check1 = mod(
-            2677645968725316621015619869450152864647228279630205537839043777851746991032546379411759301873628589865323972267292n, 
-            0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-        )
-        let check2 = 2677645968725316621015619869450152864647228279630205537839043777851746991032546379411759301873628589865323972267292n % 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-        console.log(check1)
-        console.log(check2)
-    
-        let check3 = mod(
-            642028968083064602081503935951460674948359165584505629909392587559789014492015736461767230392272902803839055902666n, 
-            0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-        )
-        let check4 = 642028968083064602081503935951460674948359165584505629909392587559789014492015736461767230392272902803839055902666n % 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-        console.log(check3)
-        console.log(check4)
-
-        console.log("in verify")
         let P = new point (
             fp1FromBigInt(3071902358779104425805220059913391042958977442368743450008922736970201383908820407429457646333339330346464018568299n),
             fp1FromBigInt(208729469830998646909339719617829960147637284847029296662162145937938053125975650713155855600870449370845588704920n),
@@ -49,26 +31,18 @@ describe("Verification", () => {
             ),
             false
         )
-
-        console.log("P.isOnCurve(): ", P.isOnCurve())
     
         expect(
             P.isOnCurve()
         ).to.equal(true)
 
-        console.log("Hm.isOnCurve(): ", Hm.isOnCurve())
-
         expect(
             Hm.isOnCurve()
         ).to.equal(true)
-
-        console.log("P.isInSubGroup(): ", P.isInSubGroup())
     
         expect(
             P.isInSubGroup()
         ).to.equal(true)
-
-        console.log("Hm.isInSubGroup(): ", Hm.isInSubGroup())
 
         expect(
             Hm.isInSubGroup()
@@ -92,32 +66,25 @@ describe("Verification", () => {
             ),
             false
         )
-
-        console.log("G.isOnCurve(): ", G.isOnCurve())
     
         expect(
             G.isOnCurve()
         ).to.equal(true)
 
-        console.log("S.isOnCurve(): ", S.isOnCurve())
-
         expect(
             S.isOnCurve()
         ).to.equal(true)
-
-        console.log("G.isInSubGroup(): ", G.isInSubGroup())
     
         expect(
             G.isInSubGroup()
         ).to.equal(true)
 
-        console.log("S.isInSubGroup(): ", S.isInSubGroup())
-
         expect(
             S.isInSubGroup()
         ).to.equal(true)
 
-        let pairingRes = pairing(P, Hm)
+        let pairingRes = pairing(P.pointNegate(), Hm)
+        // let pairingRes = pairing(P, Hm)
         console.log("pairingRes: ")
         pairingRes.displayInfo()
 
@@ -130,8 +97,8 @@ describe("Verification", () => {
         // ).to.equal(true)
 
         expect(
-            pairingRes
-        ).to.equal(pairingRes2)
+            pairingRes.mul(pairingRes2).equalOne()
+        ).to.equal(true)
 
     }).timeout(80000)
 

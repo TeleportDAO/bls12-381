@@ -168,7 +168,7 @@ function pointMul(scalar: bigint, base: point): point {
     } else if (base.isOnCurve() && scalar == 0n) {
         return base.pointAtInfinity();
     } else if (base.isOnCurve() && scalar < 0n) {
-        return pointMulHelper(scalar * -1n, base.pointNegate(), base.pointAtInfinity());
+        return pointMulHelper(-1n * scalar, base.pointNegate(), base.pointAtInfinity());
     }
 
     // TODO: add some assert validity function to check the inputs first
@@ -192,7 +192,8 @@ function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
     if (exp <= 1n) {
       return a0;
     }
-    const accum = powHelper(a0, exp / 2n, result);
+    // const accum = powHelper(a0, exp / 2n, result);
+    const accum = powHelper(a0, exp >> 1n, result);
     if (mod(exp, 2n) == 0n) {
       return accum.mul(accum);
     } else {
