@@ -1,7 +1,6 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { order } from "./fields";
 import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
-import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
+import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
 // import { error } from "console";
 
 class point {
@@ -56,7 +55,7 @@ class point {
             this.x.mul(
                 this.x.mul(this.x)
             ).add(
-                fp1FromBigInt(BigNumber.from(4))
+                fp1FromBigInt(4n)
             )
         )
     }
@@ -69,7 +68,7 @@ class point {
             this.x.mul(
                 this.x.mul(this.x)
             ).add(
-                this.x.fromBigInt(BigNumber.from(4)).mulNonres()
+                this.x.fromBigInt(4n).mulNonres()
             )
         )
     }
@@ -95,8 +94,8 @@ function pointDouble(p: point): point {
     }
 
     let slope, x3, y3;
-    slope = (p.x.mul(p.x).mul(p.x.fromBigInt(BigNumber.from(3)))).mul((p.y.mul(p.y.fromBigInt(BigNumber.from(2)))).inv())
-    x3 = (slope.mul(slope)).sub((p.x.mul(p.x.fromBigInt(BigNumber.from(2)))))
+    slope = (p.x.mul(p.x).mul(p.x.fromBigInt(3n))).mul((p.y.mul(p.y.fromBigInt(2n))).inv())
+    x3 = (slope.mul(slope)).sub((p.x.mul(p.x.fromBigInt(2n))))
     y3 = ((p.x.sub(x3)).mul(slope)).sub(p.y)
 
     return new point (x3, y3, false)
@@ -130,8 +129,8 @@ function pointAdd(p: point, q: point): point {
     return new point(x3, y3, false);
 }
 
-let zeroFp1 = new Fp1 (BigNumber.from(0))
-let oneFp1 = new Fp1 (BigNumber.from(1))
+let zeroFp1 = new Fp1 (0n)
+let oneFp1 = new Fp1 (1n)
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
@@ -157,44 +156,44 @@ function untwist(fp2Point: point): point {
     return new point(wideX, wideY, false)
 }
 
-function pointMul(scalar: BigNumber, base: point): point {
+function pointMul(scalar: bigint, base: point): point {
     if (base.isInf) {
         return base.pointAtInfinity()
     }
     if (
         base.isOnCurve() && 
-        scalar.gt(BigNumber.from(0))
+        scalar > 0n
     ) {
         return pointMulHelper(scalar, base, new point(base.x.zero(), base.x.zero(), true));
-    } else if (base.isOnCurve() && scalar.eq(BigNumber.from(0))) {
+    } else if (base.isOnCurve() && scalar == 0n) {
         return base.pointAtInfinity();
-    } else if (base.isOnCurve() && scalar.lte(BigNumber.from(0))) {
-        return pointMulHelper(scalar.mul(BigNumber.from(-1)), base.pointNegate(), base.pointAtInfinity());
+    } else if (base.isOnCurve() && scalar < 0n) {
+        return pointMulHelper(scalar * -1n, base.pointNegate(), base.pointAtInfinity());
     }
 
     // TODO: add some assert validity function to check the inputs first
     throw "error: is not on curve"
 }
   
-function pointMulHelper(scalar: BigNumber, base: point, accum: point): point {
-    if (scalar.eq(BigNumber.from(0))) {
+function pointMulHelper(scalar: bigint, base: point, accum: point): point {
+    if (scalar == 0n) {
         return accum;
     }
     const doubleBase = pointAdd(base, base);
-    if ((scalar.mod(BigNumber.from(2))).eq(BigNumber.from(1))) {
+    if ((mod(scalar, 2n)) == 1n) {
         pointAdd(accum, base)
-        return pointMulHelper(scalar.div(BigNumber.from(2)), doubleBase, pointAdd(accum, base));
+        return pointMulHelper(scalar / 2n, doubleBase, pointAdd(accum, base));
     } else {
-        return pointMulHelper(scalar.div(BigNumber.from(2)), doubleBase, accum);
+        return pointMulHelper(scalar / 2n, doubleBase, accum);
     }
 }
 
-function powHelper(a0: Fp, exp: BigNumber, result: Fp): Fp {
-    if (exp.lte(BigNumber.from(1))) {
+function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
+    if (exp <= 1n) {
       return a0;
     }
-    const accum = powHelper(a0, exp.div(BigNumber.from(2)), result);
-    if (exp.mod(BigNumber.from(2)).eq(BigNumber.from(0))) {
+    const accum = powHelper(a0, exp / 2n, result);
+    if (mod(exp, 2n) == 0n) {
       return accum.mul(accum);
     } else {
       return accum.mul(accum).mul(a0);

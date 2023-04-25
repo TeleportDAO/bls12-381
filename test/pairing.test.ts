@@ -19,8 +19,8 @@ describe("Pairing", () => {
         //     false 
         // )
         let mew1 = new point (
-            fp1FromBigInt(BigNumber.from("3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507")),
-            fp1FromBigInt(BigNumber.from("1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569")),
+            fp1FromBigInt(3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507n),
+            fp1FromBigInt(1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569n),
             false 
         )
 
@@ -39,12 +39,12 @@ describe("Pairing", () => {
         let mew2 = new point (
             new Fp2(
 
-                fp1FromBigInt(BigNumber.from("842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533")),
-                fp1FromBigInt(BigNumber.from("966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406")),
+                fp1FromBigInt(842321951799503469014964953496381065608123412078137658319961132736911642409943969612292629578043499296195717122533n),
+                fp1FromBigInt(966572263166434944599183957482752531047038993953916430862595578899059824912156165297149403978420723932172123775406n),
             ),
             new Fp2(
-                fp1FromBigInt(BigNumber.from("3855722596444217665140296300241881837775734411784092265317102637289824807772757224642216633698428180424693166393122")),
-                fp1FromBigInt(BigNumber.from("1639805997476177777241606094884612303776858264957232458415894583607376414805753804084820168641517462543804792794779")),
+                fp1FromBigInt(3855722596444217665140296300241881837775734411784092265317102637289824807772757224642216633698428180424693166393122n),
+                fp1FromBigInt(1639805997476177777241606094884612303776858264957232458415894583607376414805753804084820168641517462543804792794779n),
             ),
             false
         )
@@ -67,13 +67,13 @@ describe("Pairing", () => {
         // )
 
         let pairingRes = pairing(
-            pointMul(BigNumber.from(-3), mew1), 
-            pointMul(BigNumber.from(-2), mew2)
+            pointMul(-3n, mew1), 
+            pointMul(-2n, mew2)
         )
         let pairingRes2 = pairing(
             mew1, 
             pointMul(
-                BigNumber.from(6)
+                6n
                 , 
                 mew2
             )
@@ -111,19 +111,19 @@ describe("Pairing", () => {
 
     it("double eval", function() {
         let mew1 = new point (
-            fp1FromBigInt(BigNumber.from(g1AddTestVector.g1_add[0].p1X)),
-            fp1FromBigInt(BigNumber.from(g1AddTestVector.g1_add[0].p1Y)),
+            fp1FromBigInt(g1AddTestVector.g1_add[0].p1X),
+            fp1FromBigInt(g1AddTestVector.g1_add[0].p1Y),
             false 
         )
     
         let mew2 = new point (
             new Fp2(
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a0)),
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1X_a1)),
+                fp1FromBigInt(g2AddTestVector.g2_add[0].p1X_a0),
+                fp1FromBigInt(g2AddTestVector.g2_add[0].p1X_a1),
             ),
             new Fp2(
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a0)),
-                fp1FromBigInt(BigNumber.from(g2AddTestVector.g2_add[0].p1Y_a1)),
+                fp1FromBigInt(g2AddTestVector.g2_add[0].p1Y_a0),
+                fp1FromBigInt(g2AddTestVector.g2_add[0].p1Y_a1),
             ),
             false
         )

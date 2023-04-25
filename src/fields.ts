@@ -1,47 +1,54 @@
-import { BigNumber } from "@ethersproject/bignumber";
 
-let order: BigNumber = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
-let groupOrder: BigNumber = BigNumber.from("0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001")
+// let order: BigNumber = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
+let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
+// let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
+let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
+
+function mod(a: bigint, b: bigint) {
+    const res = a % b;
+    return res >= 0n ? res : b + res;
+    // return res;
+}
 
 const beea = (
-    u: BigNumber, 
-    v: BigNumber, 
-    x1: BigNumber, 
-    x2: BigNumber, 
-    p: BigNumber
+    u: bigint, 
+    v: bigint, 
+    x1: bigint, 
+    x2: bigint, 
+    p: bigint
 ) => {
     let firstU = u;
-    let theInv = BigNumber.from(0)
+    let theInv = 0n
 
-    while (!u.eq(BigNumber.from(1)) && !v.eq( BigNumber.from(1))) {
-        while (u.mod(2).eq(0) && u.gt(0)) {
-            u = u.div(2)
-            if (x1.mod(2).eq(0))
-                x1 = x1.div(2)
+    while (u != 1n && v != 1n) {
+        while (mod(u, 2n) == 0n && u > 0n) {
+            u = u / 2n
+            if (mod(x1, 2n) == 0n)
+                x1 = x1 / 2n
             else 
-                x1 = (x1.add(p)).div(2)
+                x1 = (x1 + p) / 2n
         }
-        while (v.mod(2).eq(0)) {
-            v = v.div(2)
-            if (x2.mod(2).eq(0))
-                x2 = x2.div(2)
+        while (mod(v, 2n) == 0n) {
+            v = v / 2n
+            if (mod(x2, 2n) == 0n )
+                x2 = x2 / 2n
             else 
-                x2 = (x2.add(p)).div(2)
+                x2 = (x2 + p) / 2n
         }
-        if (u.gt(v)) {
-            u = u.sub(v)
-            x1 = x1.sub(x2)
+        if (u > v) {
+            u = u - v
+            x1 = x1 - x2
         } else {
-            v = v.sub(u)
-            x2 = x2.sub(x1)
+            v = v - u
+            x2 = x2 -x1
         }
     }
 
-    if (u.eq(BigNumber.from(1))) {
-        theInv = x1.mod(p)
+    if (u == 1n) {
+        theInv = mod(x1, p)
     }
     else {
-        theInv = x2.mod(p)
+        theInv = mod(x2, p)
     }
 
     return theInv;
@@ -57,13 +64,13 @@ interface Fp{
     equalOne(): Boolean;
     mulNonres(): any;
     eq(y: any): Boolean;
-    fromBigInt(x: BigNumber): any;
+    fromBigInt(x: bigint): any;
     zero(): any;
 }
 
 class Fp1 implements Fp {
-    public a0: BigNumber;
-	constructor(a0: BigNumber){
+    public a0: bigint;
+	constructor(a0: bigint){
       	this.a0 = a0;
     }
   	displayInfo() {
@@ -74,25 +81,25 @@ class Fp1 implements Fp {
             beea(
                 this.a0,
                 order, 
-                BigNumber.from(1), 
-                BigNumber.from(0), 
+                1n, 
+                0n, 
                 order
             )
         )
     }
     add(y: Fp1): Fp1 {
         return new Fp1(
-            this.a0.add(y.a0).mod(order)
+            mod(this.a0 + y.a0, order)
         )
     }
     sub(y: Fp1): Fp1 {
         return new Fp1(
-            this.a0.sub(y.a0).mod(order)
+            mod(this.a0 - y.a0, order)
         )
     }
     mul(y: Fp1): Fp1 {
         return new Fp1(
-            this.a0.mul(y.a0).mod(order)
+            mod(this.a0 * y.a0, order)
         )
     }
     equalOne(): Boolean{
@@ -104,9 +111,9 @@ class Fp1 implements Fp {
         )
     }
     eq(y: Fp1): Boolean{
-        return this.a0.eq(y.a0)
+        return this.a0 == y.a0
     } 
-    fromBigInt(x: BigNumber): Fp1 {
+    fromBigInt(x: bigint): Fp1 {
         return new Fp1(x)
     }
     zero(): Fp1 {
@@ -114,8 +121,8 @@ class Fp1 implements Fp {
     }
 }
 
-let zeroFp1 = new Fp1 (BigNumber.from(0))
-let oneFp1 = new Fp1 (BigNumber.from(1))
+let zeroFp1 = new Fp1 (0n)
+let oneFp1 = new Fp1 (1n)
 
 class Fp2 implements Fp {
     public a0: Fp1;
@@ -140,7 +147,7 @@ class Fp2 implements Fp {
 
         return new Fp2(
             this.a0.mul(factor),
-            this.a1.mul(fp1FromBigInt(BigNumber.from(-1))).mul(factor)
+            this.a1.mul(fp1FromBigInt(-1n)).mul(factor)
         )
     }
     add(y: Fp2): Fp2 {
@@ -181,7 +188,7 @@ class Fp2 implements Fp {
     eq(y: Fp2): Boolean{
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber): Fp2 {
+    fromBigInt(x: bigint): Fp2 {
         return new Fp2(fp1FromBigInt(x), zeroFp1)
     }
     zero(): Fp2 {
@@ -189,19 +196,19 @@ class Fp2 implements Fp {
     }
 }
 
-function fp1FromBigInt(x: BigNumber): Fp1 {
+function fp1FromBigInt(x: bigint): Fp1 {
     return new Fp1(x)
 }
 
-function fp2FromBigInt(x: BigNumber): Fp2 {
+function fp2FromBigInt(x: bigint): Fp2 {
     return new Fp2(fp1FromBigInt(x), zeroFp1)
 }
 
-function fp6FromBigInt(x: BigNumber): Fp6 {
+function fp6FromBigInt(x: bigint): Fp6 {
     return new Fp6(fp2FromBigInt(x), zeroFp2, zeroFp2)
 }
 
-function fp12FromBigInt(x: BigNumber): Fp12 {
+function fp12FromBigInt(x: bigint): Fp12 {
     return new Fp12(fp6FromBigInt(x), zeroFp6)
 }
 
@@ -284,7 +291,7 @@ class Fp6 implements Fp {
     eq(y: Fp6): Boolean {
         return this.a2.eq(y.a2) && this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber): Fp6 {
+    fromBigInt(x: bigint): Fp6 {
         return new Fp6(fp2FromBigInt(x), zeroFp2, zeroFp2)
     }
     zero(): Fp6 {
@@ -353,7 +360,7 @@ class Fp12 implements Fp {
     eq(y: Fp12): Boolean {
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
-    fromBigInt(x: BigNumber): Fp12 {
+    fromBigInt(x: bigint): Fp12 {
         return new Fp12(fp6FromBigInt(x), zeroFp6)
     }
     zero(): Fp12 {
@@ -365,5 +372,5 @@ let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 export { Fp, Fp1, Fp2, Fp6, Fp12 }
-export { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
+export { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
 export { order, groupOrder }
