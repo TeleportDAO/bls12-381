@@ -10,6 +10,7 @@ function mod(a: bigint, b: bigint) {
     // return res;
 }
 
+
 const beea = (
     u: bigint, 
     v: bigint, 
@@ -61,11 +62,13 @@ interface Fp{
     add(y: any): any;
     sub(y: any): any;
     mul(y: any): any;
+    mulScalar(y: bigint): any;
     equalOne(): Boolean;
     mulNonres(): any;
     eq(y: any): Boolean;
     fromBigInt(x: bigint): any;
     zero(): any;
+    frobeniusMap(p: number): any;
 }
 
 class Fp1 implements Fp {
@@ -102,6 +105,11 @@ class Fp1 implements Fp {
             mod(this.a0 * y.a0, order)
         )
     }
+    mulScalar(y: bigint): Fp1 {
+        return new Fp1(
+            mod(this.a0 * y, order)
+        )
+    }
     equalOne(): Boolean{
         return this.eq(oneFp1)
     }
@@ -118,6 +126,9 @@ class Fp1 implements Fp {
     }
     zero(): Fp1 {
         return zeroFp1
+    }
+    frobeniusMap(p: number): Fp1{
+        throw "error un-implemented"
     }
 }
 
@@ -176,6 +187,12 @@ class Fp2 implements Fp {
             ),
         )
     }
+    mulScalar(y: bigint): Fp2 {
+        return new Fp2(
+            this.a0.mulScalar(y),
+            this.a1.mulScalar(y)
+        )
+    }
     equalOne(): Boolean {
         return this.a1.eq(zeroFp1) && this.a0.eq(oneFp1)
     }
@@ -194,14 +211,28 @@ class Fp2 implements Fp {
     zero(): Fp2 {
         return zeroFp2
     }
+    frobeniusMap(p: number): Fp2{
+        return new Fp2(
+            this.a0,
+            this.a1.mul(
+                FP2_FROBENIUS_COEFFICIENTS[p % 2]
+            )
+        )
+    }
 }
 
 function fp1FromBigInt(x: bigint): Fp1 {
     return new Fp1(x)
 }
+function buildFp1(x: bigint): Fp1 {
+    return new Fp1(x)
+}
 
 function fp2FromBigInt(x: bigint): Fp2 {
     return new Fp2(fp1FromBigInt(x), zeroFp1)
+}
+function buildFp2(a0: bigint, a1: bigint): Fp2 {
+    return new Fp2(fp1FromBigInt(a0), fp1FromBigInt(a1))
 }
 
 function fp6FromBigInt(x: bigint): Fp6 {
@@ -278,6 +309,13 @@ class Fp6 implements Fp {
             t2
         )
     }
+    mulScalar(y: bigint): Fp6 {
+        return new Fp6(
+            this.a0.mulScalar(y),
+            this.a1.mulScalar(y),
+            this.a2.mulScalar(y),
+        )
+    }
     equalOne(): Boolean {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
@@ -296,6 +334,13 @@ class Fp6 implements Fp {
     }
     zero(): Fp6 {
         return zeroFp6
+    }
+    frobeniusMap(p: number): Fp6{
+        return new Fp6(
+            this.a0.frobeniusMap(p),
+            this.a1.frobeniusMap(p).mul(FP6_FROBENIUS_COEFFICIENTS_1[p % 6]),
+            this.a2.frobeniusMap(p).mul(FP6_FROBENIUS_COEFFICIENTS_2[p % 6])
+        )
     }
 }
 
@@ -351,6 +396,12 @@ class Fp12 implements Fp {
             (this.a1.mul(y.a0)).add(this.a0.mul(y.a1))
         )
     }
+    mulScalar(y: bigint): Fp12 {
+        return new Fp12(
+            this.a0.mulScalar(y),
+            this.a1.mulScalar(y)
+        )
+    }
     equalOne(): Boolean {
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
     }
@@ -366,7 +417,112 @@ class Fp12 implements Fp {
     zero(): Fp12 {
         return zeroFp12
     }
+    frobeniusMap(p: number): Fp12{
+        const r0 = this.a0.frobeniusMap(p);
+        const { a0, a1, a2 } = this.a1.frobeniusMap(p);
+        const coeff = FP12_FROBENIUS_COEFFICIENTS[p % 12];
+        return new Fp12(r0, new Fp6(a0.mul(coeff), a1.mul(coeff), a2.mul(coeff)));
+    }
 }
+
+const FP2_FROBENIUS_COEFFICIENTS = [
+    buildFp1(0x1n),
+    buildFp1(0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaaan),
+]
+
+const FP6_FROBENIUS_COEFFICIENTS_1 = [
+    buildFp2(0x1n, 0x0n),
+    buildFp2(
+      0x0n,
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaacn,
+    ),
+    buildFp2(
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffefffen,
+      0x0n,
+    ),
+    buildFp2(0x0n, 0x1n),
+    buildFp2(
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaacn,
+      0x0n,
+    ),
+    buildFp2(
+      0x0n,
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffefffen,
+    ),
+]
+
+const FP6_FROBENIUS_COEFFICIENTS_2 = [
+    buildFp2(0x1n, 0x0n),
+    buildFp2(
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaadn,
+      0x0n,
+    ),
+    buildFp2(
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaacn,
+      0x0n,
+    ),
+    buildFp2(
+      0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaaan,
+      0x0n,
+    ),
+    buildFp2(
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffefffen,
+      0x0n,
+    ),
+    buildFp2(
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffeffffn,
+      0x0n,
+    ),
+]
+
+const FP12_FROBENIUS_COEFFICIENTS = [
+    buildFp2(0x1n, 0x0n),
+    buildFp2(
+      0x1904d3bf02bb0667c231beb4202c0d1f0fd603fd3cbd5f4f7b2443d784bab9c4f67ea53d63e7813d8d0775ed92235fb8n,
+      0x00fc3e2b36c4e03288e9e902231f9fb854a14787b6c7b36fec0c8ec971f63c5f282d5ac14d6c7ec22cf78a126ddc4af3n,
+    ),
+    buildFp2(
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffeffffn,
+      0x0n,
+    ),
+    buildFp2(
+      0x135203e60180a68ee2e9c448d77a2cd91c3dedd930b1cf60ef396489f61eb45e304466cf3e67fa0af1ee7b04121bdea2n,
+      0x06af0e0437ff400b6831e36d6bd17ffe48395dabc2d3435e77f76e17009241c5ee67992f72ec05f4c81084fbede3cc09n,
+    ),
+    buildFp2(
+      0x00000000000000005f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffefffen,
+      0x0n,
+    ),
+    buildFp2(
+      0x144e4211384586c16bd3ad4afa99cc9170df3560e77982d0db45f3536814f0bd5871c1908bd478cd1ee605167ff82995n,
+      0x05b2cfd9013a5fd8df47fa6b48b1e045f39816240c0b8fee8beadf4d8e9c0566c63a3e6e257f87329b18fae980078116n,
+    ),
+    buildFp2(
+      0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaaan,
+      0x0n,
+    ),
+    buildFp2(
+      0x00fc3e2b36c4e03288e9e902231f9fb854a14787b6c7b36fec0c8ec971f63c5f282d5ac14d6c7ec22cf78a126ddc4af3n,
+      0x1904d3bf02bb0667c231beb4202c0d1f0fd603fd3cbd5f4f7b2443d784bab9c4f67ea53d63e7813d8d0775ed92235fb8n,
+    ),
+    buildFp2(
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaacn,
+      0x0n,
+    ),
+    buildFp2(
+      0x06af0e0437ff400b6831e36d6bd17ffe48395dabc2d3435e77f76e17009241c5ee67992f72ec05f4c81084fbede3cc09n,
+      0x135203e60180a68ee2e9c448d77a2cd91c3dedd930b1cf60ef396489f61eb45e304466cf3e67fa0af1ee7b04121bdea2n,
+    ),
+    buildFp2(
+      0x1a0111ea397fe699ec02408663d4de85aa0d857d89759ad4897d29650fb85f9b409427eb4f49fffd8bfd00000000aaadn,
+      0x0n,
+    ),
+    buildFp2(
+      0x05b2cfd9013a5fd8df47fa6b48b1e045f39816240c0b8fee8beadf4d8e9c0566c63a3e6e257f87329b18fae980078116n,
+      0x144e4211384586c16bd3ad4afa99cc9170df3560e77982d0db45f3536814f0bd5871c1908bd478cd1ee605167ff82995n,
+    ),
+]
+
 
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (oneFp6, zeroFp6)

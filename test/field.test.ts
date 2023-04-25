@@ -5,7 +5,7 @@ import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 import { pairing, miller } from "../src/pairing"
 
 
-describe("Fields", () => {
+describe.only("Fields", () => {
 
     it("Fp12 inv", function() {
 
