@@ -88,6 +88,8 @@ class point {
     }
 }
 
+
+
 function pointDouble(p: point): point {
     if (p.isInf) {
         return p

@@ -111,6 +111,14 @@ class Fp1 implements Fp {
             mod(this.a0 * y, order)
         )
     }
+    div(y: Fp1): Fp1 {
+        return this.mul(y.inv())
+    }
+    divScalar(y: bigint): Fp1 {
+        return new Fp1(
+            mod(this.a0 / y, order)
+        )
+    }
     equalOne(): Boolean{
         return this.eq(oneFp1)
     }
@@ -198,6 +206,24 @@ class Fp2 implements Fp {
         return new Fp2(
             this.a0.mulScalar(y),
             this.a1.mulScalar(y)
+        )
+    }
+    
+    multiplyByB() {
+        let c0 = this.a0;
+        let c1 = this.a1;
+        let t0 = c0.mulScalar(4n); // 4 * c0
+        let t1 = c1.mulScalar(4n); // 4 * c1
+        // (T0-T1) + (T0+T1)*i
+        return new Fp2(t0.sub(t1), t0.add(t1));
+    }
+    div(y: Fp2): Fp2 {
+        return this.mul(y.inv())
+    }
+    divScalar(y: bigint): Fp2 {
+        return new Fp2(
+            this.a0.divScalar(y),
+            this.a1.divScalar(y)
         )
     }
     equalOne(): Boolean {
@@ -334,6 +360,28 @@ class Fp6 implements Fp {
             this.a2.mulScalar(y),
         )
     }
+    // Sparse multiplication
+    multiplyBy01(b0: Fp2, b1: Fp2): Fp6 {
+        let { a0, a1, a2 } = this;
+        let t0 = a0.mul(b0); // c0 * b0
+        let t1 = a1.mul(b1); // c1 * b1
+        return new Fp6(
+        // ((c1 + c2) * b1 - T1) * (u + 1) + T0
+        a1.add(a2).mul(b1).sub(t1).mulNonres().add(t0),
+        // (b0 + b1) * (c0 + c1) - T0 - T1
+        b0.add(b1).mul(a0.add(a1)).sub(t0).sub(t1),
+        // (c0 + c2) * b0 - T0 + T1
+        a0.add(a2).mul(b0).sub(t0).add(t1)
+        );
+    }
+    // Sparse multiplication
+    multiplyBy1(b1: Fp2): Fp6 {
+        return new Fp6(
+        this.a2.mul(b1).mulNonres(),
+        this.a0.mul(b1),
+        this.a1.mul(b1)
+        );
+    }
     equalOne(): Boolean {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
@@ -423,6 +471,17 @@ class Fp12 implements Fp {
             this.a1.mulScalar(y)
         )
     }
+    // Sparse multiplication
+    multiplyBy014(o0: Fp2, o1: Fp2, o4: Fp2) {
+        let { a0, a1 } = this;
+        let t0 = a0.multiplyBy01(o0, o1);
+        let t1 = a1.multiplyBy1(o4);
+        return new Fp12(
+            t1.mulNonres().add(t0), // T1 * v + T0
+            // (c1 + c0) * [o0, o1+o4] - T0 - T1
+            a1.add(a0).multiplyBy01(o0, o1.add(o4)).sub(t0).sub(t1)
+        );
+    }
     div(y: Fp12): Fp12 {
         return this.mul(y.inv());
     }
@@ -458,9 +517,18 @@ class Fp12 implements Fp {
         const b2 = b.square();
         return {
           first: b2.mulNonres().add(a2), // b² * Nonresidue + a²
-          second: a.add(b).square().sub(a2).sub(b2), // (a + b)² - a² - b²
+          second: ((a.add(b)).square()).sub(a2).sub(b2), // (a + b)² - a² - b²
         };
     }
+    square() {
+        let { a0, a1 } = this;
+        let ab = a0.mul(a1); // c0 * c1
+        return new Fp12(
+          // (c1 * v + c0) * (c0 + c1) - AB - AB * v
+          a1.mulNonres().add(a0).mul(a0.add(a1)).sub(ab).sub(ab.mulNonres()),
+          ab.add(ab)
+        ); // AB + AB
+      }
 
     private cyclotomicSquare(): Fp12 {
         const { a0: c0c0, a1: c0c1, a2: c0c2 } = this.a0;
@@ -647,4 +715,4 @@ let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 export { Fp, Fp1, Fp2, Fp6, Fp12 }
 export { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
-export { order, groupOrder }
+export { order, groupOrder, BLS_X_LEN, bitGet, curveX }

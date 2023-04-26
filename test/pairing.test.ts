@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
+import { untwist, pointDouble, pointMul, pointAdd, point, powHelper } from "../src/points"
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
@@ -9,8 +9,69 @@ import { pairing, miller, doubleEval, addEval } from "../src/pairing"
 const g1AddTestVector = require("./fixtures/g1_add.json")
 const g2AddTestVector = require("./fixtures/g2_add.json")
 
+const g1MulTestVector = require("./fixtures/g1_mul.json")
+const g2MulTestVector = require("./fixtures/g2_mul.json")
 
-describe.only("Pairing", () => {
+let zeroFp1 = new Fp1 (0n)
+let oneFp1 = new Fp1 (1n)
+let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
+let oneFp2 = new Fp2 (oneFp1, zeroFp1)
+let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
+let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
+let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
+let oneFp12 = new Fp12 (oneFp6, zeroFp6)
+
+
+describe("Pairing", () => {
+
+    // it("final exponate ", function() {
+
+    //     for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+    //         let f = new Fp12 (
+    //             new Fp6 (
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 )
+    //             ),
+    //             new Fp6 (
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 )
+    //             )
+    //         )
+
+    //         let bigNumberOrder = BigNumber.from(order.toString())
+    //         bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
+    //         let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
+    
+    //         let powRes = powHelper(f, theSecond, oneFp12) as Fp12
+
+    //         let mulRes = f.finalExponentiate()
+    
+    //         expect(
+    //             mulRes.eq(powRes)
+    //         ).to.equal(true)
+    //     }
+
+    // }).timeout(100000)
 
     it("pairing", function() {
 
@@ -81,13 +142,13 @@ describe.only("Pairing", () => {
         )
         // pairingRes.displayInfo()
 
-        // let pairingRes2 = pairing(
-        //     mew1, 
-        //     pointMul(
-        //         6n, 
-        //         mew2
-        //     )
-        // )
+        let pairingRes2 = pairing(
+            mew1, 
+            pointMul(
+                6n, 
+                mew2
+            )
+        )
 
         // pairingRes.displayInfo()
         // pairingRes2.displayInfo()
@@ -114,43 +175,52 @@ describe.only("Pairing", () => {
         // pairingRes2.a0.displayInfo()
         // // pairingRes.displayInfo()
         
-        // expect(
-        //     pairingRes.eq(pairingRes2)
-        // ).to.equal(true)
+        expect(
+            pairingRes.eq(pairingRes2)
+        ).to.equal(true)
 
     }).timeout(600000)
 
-    it("double eval", function() {
-        let mew1 = new point (
-            fp1FromBigInt(g1AddTestVector.g1_add[0].p1X),
-            fp1FromBigInt(g1AddTestVector.g1_add[0].p1Y),
-            false 
-        )
+    // it("double eval", function() {
+    //     let mew1 = new point (
+    //         fp1FromBigInt(BigInt(g1AddTestVector.g1_add[0].p1X)),
+    //         fp1FromBigInt(BigInt(g1AddTestVector.g1_add[0].p1Y)),
+    //         false 
+    //     )
     
-        let mew2 = new point (
-            new Fp2(
-                fp1FromBigInt(g2AddTestVector.g2_add[0].p1X_a0),
-                fp1FromBigInt(g2AddTestVector.g2_add[0].p1X_a1),
-            ),
-            new Fp2(
-                fp1FromBigInt(g2AddTestVector.g2_add[0].p1Y_a0),
-                fp1FromBigInt(g2AddTestVector.g2_add[0].p1Y_a1),
-            ),
-            false
-        )
+    //     let mew2 = new point (
+    //         new Fp2(
+    //             fp1FromBigInt(BigInt(g2AddTestVector.g2_add[0].p1X_a0)),
+    //             fp1FromBigInt(BigInt(g2AddTestVector.g2_add[0].p1X_a1)),
+    //         ),
+    //         new Fp2(
+    //             fp1FromBigInt(BigInt(g2AddTestVector.g2_add[0].p1Y_a0)),
+    //             fp1FromBigInt(BigInt(g2AddTestVector.g2_add[0].p1Y_a1)),
+    //         ),
+    //         false
+    //     )
+    //     // console.log("in double eval test")
     
-        let doubleEvalRes = doubleEval(mew2, mew1)
-        let addEvalRes = addEval(mew2, mew2, mew1)
+    //     let doubleEvalRes = doubleEval(mew2, mew1)
+    //     console.log("doubleEvalRes: ")
+    //     doubleEvalRes.displayInfo()
 
-        expect(
-            doubleEvalRes.eq(addEvalRes)
-        ).to.equal(true)
+    //     // FIXME: test is incorrect since addEval can not result in the case of 2 points 
+    //     // let addEvalRes = addEval(mew2, mew2, mew1)
+    //     // console.log("addEvalRes: ")
+    //     // addEvalRes.displayInfo()
+
+    //     // expect(
+    //     //     doubleEvalRes.eq(addEvalRes)
+    //     // ).to.equal(true)
+
+    //     // console.log("end of double eval test")
     
-        // console.log("result: ")
+    //     // console.log("result: ")
     
-        // console.log(doubleEvalRes.eq(addEvalRes))
+    //     // console.log(doubleEvalRes.eq(addEvalRes))
     
-        // doubleEvalRes.displayInfo()
-        // addEvalRes.displayInfo()
-    }).timeout(100000)
+    //     // doubleEvalRes.displayInfo()
+    //     // addEvalRes.displayInfo()
+    // })
 })
