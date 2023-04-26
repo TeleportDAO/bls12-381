@@ -85,19 +85,23 @@ describe("Verification", () => {
 
         let pairingRes = pairing(P.pointNegate(), Hm)
         // let pairingRes = pairing(P, Hm)
-        console.log("pairingRes: ")
-        pairingRes.displayInfo()
+        // console.log("pairingRes: ")
+        // pairingRes.displayInfo()
 
         let pairingRes2 = pairing(G, S)
-        console.log("pairingRes2: ")
-        pairingRes2.displayInfo()
+        // console.log("pairingRes2: ")
+        // pairingRes2.displayInfo()
     
         // expect(
         //     pairingRes.mul(pairingRes2).equalOne()
         // ).to.equal(true)
 
+        console.log("before theMustOne", new Date())
+        let theMustOne = pairingRes.mul(pairingRes2).finalExponentiate()
+        console.log("after theMustOne", new Date())
+
         expect(
-            pairingRes.mul(pairingRes2).equalOne()
+            theMustOne.equalOne()
         ).to.equal(true)
 
     }).timeout(80000)

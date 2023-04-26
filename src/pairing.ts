@@ -192,13 +192,13 @@ function pairing(p: point, q: point): Fp12 {
         q.isOnCurve() && 
         q.isInSubGroup()
     ) {
+        console.log("before calcPairingPrecomputes", new Date())
         let pairingPreComps = calcPairingPrecomputes(q.x as Fp2, q.y as Fp2)
-        console.log("pairingPreComps")
-        console.log(pairingPreComps[1])
 
+        console.log("before millerLoop", new Date())
         let looped = millerLoop(pairingPreComps, [p.x as Fp1, p.y as Fp1])
         
-        // looped.displayInfo()
+        console.log("after millerLoop", new Date())
 
         return looped;
 

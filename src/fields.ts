@@ -75,7 +75,7 @@ interface Fp{
 class Fp1 implements Fp {
     public a0: bigint;
 	constructor(a0: bigint){
-      	this.a0 = a0;
+      	this.a0 = mod(a0, order);
     }
   	displayInfo() {
         console.log("a0: ", this.a0)
@@ -220,10 +220,9 @@ class Fp2 implements Fp {
         return this.mul(y.inv())
     }
     divScalar(y: bigint): Fp2 {
-        return new Fp2(
-            this.a0.divScalar(y),
-            this.a1.divScalar(y)
-        )
+        let theFp1 = new Fp1(y)
+        let theFp1Inv = theFp1.inv()
+        return this.mulScalar(theFp1Inv.a0)
     }
     equalOne(): Boolean {
         return this.a1.eq(zeroFp1) && this.a0.eq(oneFp1)
