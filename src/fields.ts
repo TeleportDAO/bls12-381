@@ -140,7 +140,7 @@ class Fp1 implements Fp {
         throw "error un-implemented"
     }
     negate(): Fp1 {
-        return new Fp1(-this.a0)
+        return new Fp1(mod(-this.a0, order))
     }
     // invert(): Fp {
     //     return new Fp1(invert(this.a0));
@@ -208,7 +208,6 @@ class Fp2 implements Fp {
             this.a1.mulScalar(y)
         )
     }
-    
     multiplyByB() {
         let c0 = this.a0;
         let c1 = this.a1;
@@ -257,7 +256,8 @@ class Fp2 implements Fp {
     }
     square() {
         const c0 = this.a0;
-        const c1 = this.a0;
+        // if the error is because of this, fuck me please ;)))
+        const c1 = this.a1; 
         const a = c0.add(c1);
         const b = c0.sub(c1);
         const c = c0.add(c0);

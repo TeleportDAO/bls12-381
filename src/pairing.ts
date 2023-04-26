@@ -193,21 +193,36 @@ function pairing(p: point, q: point): Fp12 {
         q.isInSubGroup()
     ) {
         let pairingPreComps = calcPairingPrecomputes(q.x as Fp2, q.y as Fp2)
+        console.log("pairingPreComps")
+        console.log(pairingPreComps[1])
+
         let looped = millerLoop(pairingPreComps, [p.x as Fp1, p.y as Fp1])
+        
+        // looped.displayInfo()
 
         return looped;
 
-        let bigNumberOrder = BigNumber.from(order.toString())
-        bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
-        let millerRes = miller(p, q)
-        let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
-        console.log("start", new Date())
+        // console.log("before finalExponentiate")
+
+        // let powRes = looped.finalExponentiate()
+
+        // console.log("after finalExponentiate")
+
+        // return powRes;
+
+        // let bigNumberOrder = BigNumber.from(order.toString())
+        // bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
+        // console.log("before miller", new Date())
+        // let millerRes = miller(p, q)
+        // let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
+        // console.log("after miller", new Date())
         // let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
-        // let powRes = millerRes.finalExponentiate()
-        console.log("end", new Date())
+        
+        // // let powRes = millerRes.finalExponentiate()
+        // console.log("after power", new Date())
         
         // return powRes;
-        return millerRes;
+        // // return millerRes;
     } else {
         return zeroFp12;
     }

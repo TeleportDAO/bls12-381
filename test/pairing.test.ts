@@ -174,6 +174,9 @@ describe("Pairing", () => {
         // pairingRes2.a1.displayInfo()
         // pairingRes2.a0.displayInfo()
         // // pairingRes.displayInfo()
+
+        pairingRes.displayInfo()
+        pairingRes2.displayInfo()
         
         expect(
             pairingRes.eq(pairingRes2)
