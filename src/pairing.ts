@@ -1,17 +1,7 @@
-import { BigNumber } from "@ethersproject/bignumber"
 import { Fp, Fp1, Fp2, Fp6, Fp12, BLS_X_LEN, bitGet, curveX } from "./fields"
+import { zeroFp12, oneFp12, zeroFp6, oneFp6, zeroFp2, oneFp2, zeroFp1, oneFp1 } from "./fields";
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
 import { untwist, pointDouble, pointAdd, powHelper, point } from "./points"
-
-// TODO: import from fields.ts
-let zeroFp1 = new Fp1 (0n)
-let oneFp1 = new Fp1 (1n)
-let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (oneFp1, zeroFp1)
-let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
-let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
-let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
-let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
@@ -119,6 +109,35 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
     return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(1n))
 }
 
+function oldPairing(p: point, q: point): Fp12 {
+
+    if ( p.isInf || q.isInf ) {
+        return zeroFp12;
+    }
+
+    if (
+        p.isOnCurve() && 
+        p.isInSubGroup() && 
+        q.isOnCurve() && 
+        q.isInSubGroup()
+    ) {
+        // let bigNumberOrder = BigNumber.from(order.toString())
+        // bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
+        // console.log("before miller", new Date())
+        // let millerRes = miller(p, q)
+        // let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
+        // console.log("after miller", new Date())
+        // let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
+        
+        // console.log("after power", new Date())
+        
+        // return powRes;
+        return oneFp12
+    } else {
+        return zeroFp12;
+    }
+}
+
 
 
 function calcPairingPrecomputes(x: Fp2, y: Fp2) {
@@ -192,37 +211,10 @@ function pairing(p: point, q: point): Fp12 {
         q.isOnCurve() && 
         q.isInSubGroup()
     ) {
-        console.log("before calcPairingPrecomputes", new Date())
-        let pairingPreComps = calcPairingPrecomputes(q.x as Fp2, q.y as Fp2)
-
-        console.log("before millerLoop", new Date())
-        let looped = millerLoop(pairingPreComps, [p.x as Fp1, p.y as Fp1])
-        
-        console.log("after millerLoop", new Date())
-
-        return looped;
-
-        // console.log("before finalExponentiate")
-
-        // let powRes = looped.finalExponentiate()
-
-        // console.log("after finalExponentiate")
-
-        // return powRes;
-
-        // let bigNumberOrder = BigNumber.from(order.toString())
-        // bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
-        // console.log("before miller", new Date())
-        // let millerRes = miller(p, q)
-        // let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
-        // console.log("after miller", new Date())
-        // let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
-        
-        // // let powRes = millerRes.finalExponentiate()
-        // console.log("after power", new Date())
-        
-        // return powRes;
-        // // return millerRes;
+        return millerLoop(
+            calcPairingPrecomputes(q.x as Fp2, q.y as Fp2), 
+            [p.x as Fp1, p.y as Fp1]
+        )
     } else {
         return zeroFp12;
     }

@@ -10,7 +10,6 @@ function mod(a: bigint, b: bigint) {
     // return res;
 }
 
-
 const beea = (
     u: bigint, 
     v: bigint, 
@@ -63,6 +62,8 @@ interface Fp{
     sub(y: any): any;
     mul(y: any): any;
     mulScalar(y: bigint): any;
+    div(y: any): any;
+    divScalar(y: bigint): any;
     equalOne(): Boolean;
     mulNonres(): any;
     eq(y: any): Boolean;
@@ -381,6 +382,14 @@ class Fp6 implements Fp {
         this.a1.mul(b1)
         );
     }
+    div(y: Fp6): Fp6 {
+        return this.mul(y.inv())
+    }
+    divScalar(y: bigint): Fp6 {
+        let theFp1 = new Fp1(y)
+        let theFp1Inv = theFp1.inv()
+        return this.mulScalar(theFp1Inv.a0)
+    }
     equalOne(): Boolean {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
@@ -483,6 +492,11 @@ class Fp12 implements Fp {
     }
     div(y: Fp12): Fp12 {
         return this.mul(y.inv());
+    }
+    divScalar(y: bigint): Fp12 {
+        let theFp1 = new Fp1(y)
+        let theFp1Inv = theFp1.inv()
+        return this.mulScalar(theFp1Inv.a0)
     }
     equalOne(): Boolean {
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
@@ -713,5 +727,7 @@ let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 export { Fp, Fp1, Fp2, Fp6, Fp12 }
-export { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
-export { order, groupOrder, BLS_X_LEN, bitGet, curveX }
+export { zeroFp12, oneFp12, zeroFp6, oneFp6, zeroFp2, oneFp2, zeroFp1, oneFp1 }
+export { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
+export { order, groupOrder }
+export { mod, bitGet, BLS_X_LEN, curveX }

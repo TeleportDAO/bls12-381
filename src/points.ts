@@ -1,5 +1,5 @@
-import { order } from "./fields";
-import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
+import { Fp, Fp1, Fp2, Fp6, Fp12, order, groupOrder } from "./fields";
+import { zeroFp12, oneFp12, zeroFp6, oneFp6, zeroFp2, oneFp2, zeroFp1, oneFp1 } from "./fields";
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
 // import { error } from "console";
 
@@ -130,12 +130,6 @@ function pointAdd(p: point, q: point): point {
     
     return new point(x3, y3, false);
 }
-
-let zeroFp1 = new Fp1 (0n)
-let oneFp1 = new Fp1 (1n)
-let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (oneFp1, zeroFp1)
-let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
 // TODO: test 
 function untwist(fp2Point: point): point {
