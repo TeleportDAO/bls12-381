@@ -13,7 +13,7 @@ const g2AddTestVector = require("./fixtures/g2_add.json")
 
 describe("Verification", () => {
 
-    it.only("verify", function() {
+    it("verify", function() {
         let P = new point (
             fp1FromBigInt(3071902358779104425805220059913391042958977442368743450008922736970201383908820407429457646333339330346464018568299n),
             fp1FromBigInt(208729469830998646909339719617829960147637284847029296662162145937938053125975650713155855600870449370845588704920n),
@@ -96,12 +96,12 @@ describe("Verification", () => {
         //     pairingRes.mul(pairingRes2).equalOne()
         // ).to.equal(true)
 
-        console.log("before theMustOne", new Date())
-        let theMustOne = pairingRes.mul(pairingRes2).finalExponentiate()
-        console.log("after theMustOne", new Date())
+        // console.log("before theMustOne", new Date())
+        // let theMustOne = pairingRes.mul(pairingRes2).finalExponentiate()
+        // console.log("after theMustOne", new Date())
 
         expect(
-            theMustOne.equalOne()
+            pairingRes.mul(pairingRes2).finalExponentiate().equalOne()
         ).to.equal(true)
 
     }).timeout(80000)
@@ -146,7 +146,7 @@ describe("Verification", () => {
         let pairingRes2 = pairing(G, S)
     
         expect(
-            pairingRes.mul(pairingRes2).equalOne()
+            pairingRes.mul(pairingRes2).finalExponentiate().equalOne()
         ).to.equal(true)
     }).timeout(80000)
 })
