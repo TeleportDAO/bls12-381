@@ -179,7 +179,7 @@ describe("Pairing", () => {
         pairingRes2.displayInfo()
         
         expect(
-            pairingRes.eq(pairingRes2)
+            pairingRes.finalExponentiate().eq(pairingRes2.finalExponentiate())
         ).to.equal(true)
 
     }).timeout(600000)
