@@ -437,52 +437,52 @@ class Fp12 implements Fp {
         console.log("fp12")
 
         myString = this.a0.a0.a0.a0.toString(16)
-        console.log("a0.a0.a0.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a0.a0.b: ", myString.substring(myString.length - 64))
+        console.log("a0_a0_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a0_a0_b: ", '0x'+myString.substring(myString.length - 64))
 
         myString = this.a0.a0.a1.a0.toString(16)
-        console.log("a0.a0.a1.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a0.a1.b: ", myString.substring(myString.length -64))
+        console.log("a0_a0_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a0_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a0.a1.a0.a0.toString(16)
-        console.log("a0.a1.a0.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a1.a0.b: ", myString.substring(myString.length -64))
+        console.log("a0_a1_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a1_a0_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a0.a1.a1.a0.toString(16)
-        console.log("a0.a1.a1.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a1.a1.b: ", myString.substring(myString.length -64))
+        console.log("a0_a1_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a1_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a0.a2.a0.a0.toString(16)
-        console.log("a0.a2.a0.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a2.a0.b: ", myString.substring(myString.length -64))
+        console.log("a0_a2_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a2_a0_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a0.a2.a1.a0.toString(16)
-        console.log("a0.a2.a1.a: ", myString.substring(0, myString.length - 64))
-        console.log("a0.a2.a1.b: ", myString.substring(myString.length -64))
+        console.log("a0_a2_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a0_a2_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a0.a0.a0.toString(16)
-        console.log("a1.a0.a0: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a0.a0: ", myString.substring(myString.length -64))
+        console.log("a1_a0_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a0_a0_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a0.a1.a0.toString(16)
-        console.log("a1.a0.a1: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a0.a1: ", myString.substring(myString.length -64))
+        console.log("a1_a0_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a0_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a1.a0.a0.toString(16)
-        console.log("a1.a1.a0: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a1.a0: ", myString.substring(myString.length -64))
+        console.log("a1_a1_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a1_a0_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a1.a1.a0.toString(16)
-        console.log("a1.a1.a1: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a1.a1: ", myString.substring(myString.length -64))
+        console.log("a1_a1_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a1_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a2.a0.a0.toString(16)
-        console.log("a1.a2.a0: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a2.a0: ", myString.substring(myString.length -64))
+        console.log("a1_a2_a0_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a2_a0_b: ", '0x'+myString.substring(myString.length -64))
 
         myString = this.a1.a2.a1.a0.toString(16)
-        console.log("a1.a2.a1: ", myString.substring(0, myString.length - 64))
-        console.log("a1.a2.a1: ", myString.substring(myString.length -64))
+        console.log("a1_a2_a1_a: ", '0x'+myString.substring(0, myString.length - 64).padStart(64, '0'))
+        console.log("a1_a2_a1_b: ", '0x'+myString.substring(myString.length -64))
 
         console.log("end of fp12")
     }
