@@ -1,0 +1,32 @@
+{
+  "name": "bls12-381",
+  "version": "0.0.1",
+  "description": "an implementation of bls12-381 in typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register test/*.test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeleportDAO/bls12-381.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TeleportDAO/bls12-381/issues"
+  },
+  "homepage": "https://github.com/TeleportDAO/bls12-381#readme",
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.15.11",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
