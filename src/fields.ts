@@ -14,7 +14,6 @@ const beea = (
     x2: bigint, 
     p: bigint
 ) => {
-    let firstU = u;
     let theInv = 0n
 
     while (u != 1n && v != 1n) {
