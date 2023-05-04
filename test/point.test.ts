@@ -1,23 +1,13 @@
 // import { BN } from 'bn.js'; // or whichever library you are using for big integers
 import { expect } from "chai";
-import { point, pointAdd, pointMul, pointDouble, powHelper } from '../src/points';
-import { mod, Fp, Fp1, Fp2, Fp6, Fp12, order, groupOrder } from '../src/fields';
-import { BigNumber } from '@ethersproject/bignumber';
+import { point, pointAdd, pointMul } from '../src/points';
+import { Fp1, Fp2, Fp6, Fp12, groupOrder } from '../src/fields';
 
 const g1AddTestVector = require("./fixtures/g1_add.json")
 const g2AddTestVector = require("./fixtures/g2_add.json")
 
 const g1MulTestVector = require("./fixtures/g1_mul.json")
 const g2MulTestVector = require("./fixtures/g2_mul.json")
-
-let zeroFp1 = new Fp1 (0n)
-let oneFp1 = new Fp1 (1n)
-let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (oneFp1, zeroFp1)
-let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
-let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
-let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
-let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 function createG1Point(xStr: bigint, yStr: bigint): point {
     return new point(
@@ -184,120 +174,120 @@ describe("Points", () => {
         )
     }).timeout(100000)
 
-    it("pow ", function() {
+    // it("pow ", function() {
 
-        for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
-            let f = new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X))
+    //     for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+    //         let f = new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X))
     
-            let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+    //         let mulRes = f.mul(f).mul(f).mul(f).mul(f)
 
-            // let mulRes2 = BigInt(g1MulTestVector.g1_mul[i].p1X) 
-            // mulRes2 = mulRes2 ^ 5n
-            // mulRes2 = mod(mulRes2, order)
-            // let mulRes3 = new Fp1(mulRes2)
+    //         // let mulRes2 = BigInt(g1MulTestVector.g1_mul[i].p1X) 
+    //         // mulRes2 = mulRes2 ^ 5n
+    //         // mulRes2 = mod(mulRes2, order)
+    //         // let mulRes3 = new Fp1(mulRes2)
 
-            // console.log(f)
-            // console.log(mulRes)
-            // console.log(mulRes2)
-            // console.log(mulRes3)
+    //         // console.log(f)
+    //         // console.log(mulRes)
+    //         // console.log(mulRes2)
+    //         // console.log(mulRes3)
             
-            // expect(
-            //     mulRes
-            // ).to.equal(mulRes3)
+    //         // expect(
+    //         //     mulRes
+    //         // ).to.equal(mulRes3)
 
-            // console.log("passed")
-            // console.log(order.toString())
-            // console.log(BigNumber.from(order.toString()).toHexString())
+    //         // console.log("passed")
+    //         // console.log(order.toString())
+    //         // console.log(BigNumber.from(order.toString()).toHexString())
     
-            let powRes = powHelper(f, 5n, oneFp1) as Fp1
+    //         let powRes = powHelper(f, 5n, oneFp1) as Fp1
     
-            expect(
-                mulRes.eq(powRes)
-            ).to.equal(true)
-        }
+    //         expect(
+    //             mulRes.eq(powRes)
+    //         ).to.equal(true)
+    //     }
 
-        for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
-            let f = new Fp2(
-                new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-            )
+    //     for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+    //         let f = new Fp2(
+    //             new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //             new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //         )
     
-            let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+    //         let mulRes = f.mul(f).mul(f).mul(f).mul(f)
     
-            let powRes = powHelper(f, 5n, oneFp2) as Fp2
+    //         let powRes = powHelper(f, 5n, oneFp2) as Fp2
     
-            expect(
-                mulRes.eq(powRes)
-            ).to.equal(true)
-        }
+    //         expect(
+    //             mulRes.eq(powRes)
+    //         ).to.equal(true)
+    //     }
 
-        for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
-            let f = new Fp6 (
-                new Fp2(
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                ),
-                new Fp2(
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                ),
-                new Fp2(
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                    new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                )
-            )
+    //     for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+    //         let f = new Fp6 (
+    //             new Fp2(
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //             ),
+    //             new Fp2(
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //             ),
+    //             new Fp2(
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                 new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //             )
+    //         )
     
-            let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+    //         let mulRes = f.mul(f).mul(f).mul(f).mul(f)
     
-            let powRes = powHelper(f, 5n, oneFp6) as Fp6
+    //         let powRes = powHelper(f, 5n, oneFp6) as Fp6
     
-            expect(
-                mulRes.eq(powRes)
-            ).to.equal(true)
-        }
+    //         expect(
+    //             mulRes.eq(powRes)
+    //         ).to.equal(true)
+    //     }
 
-        for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
-            let f = new Fp12 (
-                new Fp6 (
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    ),
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    ),
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    )
-                ),
-                new Fp6 (
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    ),
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    ),
-                    new Fp2(
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
-                        new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
-                    )
-                )
-            )
+    //     for (let i = 0; i < g1MulTestVector.g1_mul.length; i++) {
+    //         let f = new Fp12 (
+    //             new Fp6 (
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 )
+    //             ),
+    //             new Fp6 (
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 ),
+    //                 new Fp2(
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1X)),
+    //                     new Fp1(BigInt(g1MulTestVector.g1_mul[i].p1Y))
+    //                 )
+    //             )
+    //         )
     
-            let mulRes = f.mul(f).mul(f).mul(f).mul(f)
+    //         let mulRes = f.mul(f).mul(f).mul(f).mul(f)
     
-            let powRes = powHelper(f, 5n, oneFp6) as Fp12
+    //         let powRes = powHelper(f, 5n, oneFp6) as Fp12
     
-            expect(
-                mulRes.eq(powRes)
-            ).to.equal(true)
-        }
+    //         expect(
+    //             mulRes.eq(powRes)
+    //         ).to.equal(true)
+    //     }
 
-    }).timeout(100000)
+    // }).timeout(100000)
 
     
 })

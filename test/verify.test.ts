@@ -1,10 +1,10 @@
 import { expect } from "chai"
-import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
+import { pointDouble, pointMul, pointAdd, point } from "../src/points"
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
 import { BigNumber } from "@ethersproject/bignumber";
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 
-import { pairing, miller, doubleEval, addEval } from "../src/pairing"
+import { pairing } from "../src/pairing"
 
 const bls = require('@noble/bls12-381');
 

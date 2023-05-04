@@ -1,7 +1,5 @@
-import { Fp, Fp1, Fp2, Fp6, Fp12, order, groupOrder } from "./fields";
-import { zeroFp12, oneFp12, zeroFp6, oneFp6, zeroFp2, oneFp2, zeroFp1, oneFp1 } from "./fields";
-import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
-// import { error } from "console";
+import { Fp, Fp1, Fp2, groupOrder } from "./fields";
+import { mod, fp1FromBigInt } from "./fields";
 
 class point {
     public x: Fp;
@@ -88,8 +86,6 @@ class point {
     }
 }
 
-
-
 function pointDouble(p: point): point {
     if (p.isInf) {
         return p
@@ -131,27 +127,6 @@ function pointAdd(p: point, q: point): point {
     return new point(x3, y3, false);
 }
 
-// TODO: test 
-function untwist(fp2Point: point): point {
-    // FIXME: what if the point is point at infinity
-
-    let root = new Fp6(zeroFp2, oneFp2, zeroFp2)
-    let fp2PointX = fp2Point.x as Fp2
-    let wideXA0 = new Fp6(fp2PointX, zeroFp2, zeroFp2)
-    let wideX = new Fp12(wideXA0, zeroFp6)
-    let forInvX = new Fp12(root, zeroFp6)
-    wideX = wideX.mul(forInvX.inv())
-
-
-    let fp2PointY = fp2Point.y as Fp2
-    let wideYA0 = new Fp6(fp2PointY, zeroFp2, zeroFp2)
-    let wideY = new Fp12(wideYA0, zeroFp6)
-    let forInvY = new Fp12(zeroFp6, root)
-    wideY = wideY.mul(forInvY.inv())
-
-    return new point(wideX, wideY, false)
-}
-
 function pointMul(scalar: bigint, base: point): point {
     if (base.isInf) {
         return base.pointAtInfinity()
@@ -184,17 +159,5 @@ function pointMulHelper(scalar: bigint, base: point, accum: point): point {
     }
 }
 
-function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
-    if (exp <= 1n) {
-      return a0;
-    }
-    // const accum = powHelper(a0, exp / 2n, result);
-    const accum = powHelper(a0, exp >> 1n, result);
-    if (mod(exp, 2n) == 0n) {
-      return accum.mul(accum);
-    } else {
-      return accum.mul(accum).mul(a0);
-    }
-}
 
-export { untwist, pointDouble, pointAdd, pointMul, powHelper, point }
+export { pointAdd, pointMul, pointDouble, point }

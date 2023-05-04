@@ -1,16 +1,7 @@
 import { expect } from "chai"
-import { untwist, pointDouble, pointMul, pointAdd, point, powHelper } from "../src/points"
-import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "../src/fields"
-import { BigNumber } from "@ethersproject/bignumber";
-import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
-
-import { pairing, miller, doubleEval, addEval } from "../src/pairing"
-
-const g1AddTestVector = require("./fixtures/g1_add.json")
-const g2AddTestVector = require("./fixtures/g2_add.json")
-
-const g1MulTestVector = require("./fixtures/g1_mul.json")
-const g2MulTestVector = require("./fixtures/g2_mul.json")
+import { pointMul, point } from "../src/points"
+import { Fp1, Fp2, Fp6, Fp12, fp1FromBigInt } from "../src/fields"
+import { pairing } from "../src/pairing"
 
 let zeroFp1 = new Fp1 (0n)
 let oneFp1 = new Fp1 (1n)

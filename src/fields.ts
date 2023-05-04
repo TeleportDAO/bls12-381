@@ -1,13 +1,10 @@
 
-// let order: BigNumber = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
 let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-// let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 
 function mod(a: bigint, b: bigint) {
     const res = a % b;
     return res >= 0n ? res : b + res;
-    // return res;
 }
 
 const beea = (
@@ -603,26 +600,6 @@ const BLS_X_LEN = bitLen(curveX);
 function bitGet(n: bigint, pos: number) {
     return (n >> BigInt(pos)) & 1n;
 }
-
-// function invert(number: bigint): bigint {
-//     if (number === 0n) {
-//         throw new Error(`invert: expected positive integers`);
-//     }
-//     let a = mod(number, order);
-//     let b = order;
-//     let x = 0n, y = 1n, u = 1n, v = 0n;
-//     while (a !== 0n) {
-//         const q = b / a;
-//         const r = b % a;
-//         const m = x - u * q;
-//         const n = y - v * q;
-//         b = a, a = r, x = u, y = v, u = m, v = n;
-//     }
-//     const gcd = b;
-//     if (gcd !== 1n) throw new Error('invert: does not exist');
-//     return x % order;
-// }
-
 
 const FP2_FROBENIUS_COEFFICIENTS = [
     buildFp1(0x1n),
