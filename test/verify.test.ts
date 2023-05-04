@@ -100,8 +100,13 @@ describe("Verification", () => {
         // let theMustOne = pairingRes.mul(pairingRes2).finalExponentiate()
         // console.log("after theMustOne", new Date())
 
+        let theMulRes = pairingRes.mul(pairingRes2)
+
+        console.log("theMulRes")
+        theMulRes.displayInfoForSolidity()
+
         expect(
-            pairingRes.mul(pairingRes2).finalExponentiate().equalOne()
+            theMulRes.finalExponentiate().equalOne()
         ).to.equal(true)
 
     }).timeout(80000)
